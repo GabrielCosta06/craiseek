@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard · Craiseek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: #fff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        header a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 16px;
+        }
+        header form {
+            display: inline;
+        }
+        header button {
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+        }
+        main {
+            max-width: 880px;
+            margin: 48px auto;
+            padding: 0 24px 48px;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+        .intro {
+            margin-bottom: 32px;
+            color: #475569;
+        }
+        .listing-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .listing-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+        .listing-card h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+        }
+        .listing-card .meta {
+            display: flex;
+            gap: 16px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 12px;
+        }
+        .listing-card a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+        .empty-state p {
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>Craiseek</div>
+    <div>
+        <span>{{ user.email }}</span>
+        <a href="/">Home</a>
+        <form action="/logout" method="post">
+            <button type="submit">Log out</button>
+        </form>
+    </div>
+</header>
+<main>
+    <h1>Latest Rentals</h1>
+    <p class="intro">Browse real-time Craigslist finds. Subscribe for SMS alerts so you hear about them first.</p>
+
+    {% if listings %}
+        <div class="listing-grid">
+            {% for listing in listings %}
+                <article class="listing-card">
+                    <h2>{{ listing.title }}</h2>
+                    <div class="meta">
+                        {% if listing.price %}<span>{{ listing.price }}</span>{% endif %}
+                        {% if listing.neighborhood %}<span>{{ listing.neighborhood }}</span>{% endif %}
+                    </div>
+                    <a href="{{ listing.url }}" target="_blank" rel="noopener">View listing →</a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>Fresh listings coming soon</h2>
+            <p>We haven't spotted any listings yet. Check back shortly or subscribe to get texts right away.</p>
+        </div>
+    {% endif %}
+</main>
+</body>
+</html>
+
