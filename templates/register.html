@@ -48,6 +48,7 @@
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border);
             transition: all 0.3s ease;
+            gap: 16px;
         }
         header .brand {
             display: flex;
@@ -55,35 +56,82 @@
             gap: 12px;
             font-weight: 700;
             color: var(--primary);
+            text-decoration: none;
+            font-size: 1.3rem;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         header .brand span {
             display: inline-flex;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 999px;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             color: #fff;
+            font-size: 1.1rem;
         }
         header nav {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
         header a {
-            color: var(--primary);
+            color: var(--text);
             text-decoration: none;
             font-weight: 600;
-            margin-left: 16px;
-            transition: color 0.2s ease;
+            padding: 8px 14px;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+        header a svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header a:hover svg {
+            opacity: 1;
+        }
+        header a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 2px;
+        }
+        header a.active::before {
+            transform: scaleX(1);
         }
         header a:hover {
-            color: var(--accent);
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        header a:hover::before {
+            transform: scaleX(1);
+        }
+        [data-theme="dark"] header a:hover {
+            background: rgba(96, 165, 250, 0.1);
         }
         .theme-toggle {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid var(--border);
             background: var(--bg-surface);
@@ -93,9 +141,20 @@
             justify-content: center;
             transition: all 0.3s ease;
         }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
         .theme-toggle:hover {
             border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
             transform: rotate(180deg);
+            color: #fff;
         }
         main {
             max-width: 420px;
@@ -151,12 +210,30 @@
             color: #fff;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+            position: relative;
         }
-        button:hover {
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         .error {
             color: var(--error);
@@ -186,12 +263,28 @@
 </head>
 <body>
 <header>
-    <div class="brand"><span>C</span> Craiseek</div>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
     <nav>
-        <a href="/">Home</a>
-        <a href="/login">Log in</a>
+        <a href="/">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/subscribe">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Plans
+        </a>
+        <a href="/login">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+            </svg>
+            Sign In
+        </a>
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
             </svg>
         </button>
@@ -202,17 +295,25 @@
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
-    <form method="post">
+    <form method="post" id="registerForm">
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required autocomplete="email" />
 
         <label for="password">Password</label>
         <input id="password" name="password" type="password" required minlength="8" autocomplete="new-password" />
 
-        <button type="submit">Sign up</button>
+        <button type="submit" id="submitBtn">Sign up</button>
     </form>
     <p class="switch">Already registered? <a href="/login">Log in</a>.</p>
 </main>
+<footer style="margin-top: 48px; padding: 32px 24px; text-align: center; color: var(--text-muted); border-top: 1px solid var(--border);">
+    <p>
+        <a href="/" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Home</a>
+        <a href="/terms" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Terms</a>
+        <a href="/privacy" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Privacy</a>
+    </p>
+    <p style="margin-top: 8px;">© 2025 Craiseek</p>
+</footer>
 <script>
     // Theme toggle functionality
     function toggleTheme() {
@@ -228,6 +329,13 @@
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     })();
+    
+    // Form loading state
+    document.getElementById('registerForm').addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>Creating account...';
+    });
 </script>
 </body>
 </html>

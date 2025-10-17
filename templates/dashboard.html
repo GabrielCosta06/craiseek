@@ -46,6 +46,7 @@
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border);
             transition: background-color 0.3s ease, border-color 0.3s ease;
+            gap: 16px;
         }
         header .brand {
             display: flex;
@@ -53,53 +54,134 @@
             gap: 12px;
             font-weight: 700;
             color: var(--primary);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-size: 1.3rem;
         }
         header .brand span {
             display: inline-flex;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 999px;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             color: #fff;
+            font-size: 1.1rem;
         }
         header nav {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
         header a {
-            color: var(--primary);
+            color: var(--text);
             text-decoration: none;
             font-weight: 600;
-            margin-right: 16px;
-            transition: color 0.2s ease;
+            padding: 8px 14px;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+        header a svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header a:hover svg {
+            opacity: 1;
+        }
+        header a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 2px;
+        }
+        header a.active::before {
+            transform: scaleX(1);
         }
         header a:hover {
-            color: var(--accent);
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        header a:hover::before {
+            transform: scaleX(1);
+        }
+        [data-theme="dark"] header a:hover {
+            background: rgba(96, 165, 250, 0.1);
         }
         header form {
-            display: inline;
+            display: inline-flex;
+            margin: 0;
         }
-        header button {
+        header button:not(.theme-toggle) {
             background: none;
             border: none;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text);
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
+            padding: 8px 14px;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
         }
-        header button:hover {
+        header button:not(.theme-toggle) svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header button:not(.theme-toggle):hover svg {
+            opacity: 1;
+        }
+        header button:not(.theme-toggle):hover {
             color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        [data-theme="dark"] header button:not(.theme-toggle):hover {
+            background: rgba(96, 165, 250, 0.1);
         }
         .user-info {
             color: var(--text-muted);
-            margin-right: 16px;
+            padding: 8px 14px;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        [data-theme="dark"] .user-info {
+            background: rgba(96, 165, 250, 0.08);
         }
         .theme-toggle {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid var(--border);
             background: var(--bg-surface);
@@ -108,11 +190,104 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            margin-left: 12px;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
         }
         .theme-toggle:hover {
             border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
             transform: rotate(180deg);
+            color: #fff;
+        }
+        /* Mobile navigation */
+        header a, header button {
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-toggle {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border: none !important;
+            background: none !important;
+            cursor: pointer;
+            padding: 10px;
+            margin-left: 12px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            header nav {
+                position: fixed;
+                top: 73px;
+                left: 0;
+                right: 0;
+                background: var(--bg-surface);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                box-shadow: 0 4px 12px var(--shadow);
+            }
+            header nav.active {
+                max-height: 500px;
+            }
+            header nav a, header nav button, header nav form {
+                margin: 0 !important;
+                padding: 12px 24px;
+                width: 100%;
+                justify-content: flex-start;
+                border-bottom: 1px solid var(--border);
+            }
+            header nav form {
+                display: block !important;
+            }
+            header nav form button {
+                width: 100%;
+                text-align: left;
+            }
+            .theme-toggle {
+                margin: 12px auto;
+            }
+            .user-info {
+                margin: 0;
+                padding: 12px 24px;
+                width: 100%;
+                border-bottom: 1px solid var(--border);
+            }
         }
         main {
             max-width: 880px;
@@ -143,10 +318,23 @@
             box-shadow: 0 8px 24px var(--shadow);
             border: 1px solid var(--border);
             transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
         }
         .listing-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 32px var(--shadow);
+            border-color: var(--primary);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .listing-card h2 {
             margin: 0 0 12px 0;
@@ -196,20 +384,136 @@
             color: var(--text-muted);
             line-height: 1.6;
         }
+        .filters {
+            background-color: var(--bg-surface);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 24px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .filters h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+        .filter-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            margin-bottom: 16px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .filter-button {
+            padding: 10px 20px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        .filter-button-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .filter-button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+        .filter-button-secondary {
+            background: var(--bg-main);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .filter-button-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .results-count {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 <body>
 <header>
-    <div class="brand"><span>C</span> Craiseek</div>
-    <nav>
-        <span class="user-info">{{ user.email }}</span>
-        <a href="/">Home</a>
-        <a href="/subscribe">Plans</a>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <nav id="main-nav">
+        <span class="user-info" title="{{ user.email }}">{{ user.email }}</span>
+        <a href="/">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/subscribe">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Plans
+        </a>
+        <a href="/settings">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Settings
+        </a>
+        <a href="/faq">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Help
+        </a>
         <form action="/logout" method="post">
-            <button type="submit">Log out</button>
+            <button type="submit">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                Sign Out
+            </button>
         </form>
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
                 <path class="sun" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
             </svg>
         </button>
@@ -218,6 +522,44 @@
 <main>
     <h1>Latest Rentals</h1>
     <p class="intro">Browse real-time Craigslist finds. Subscribe for instant alerts so you hear about them first.</p>
+
+    <!-- Filters -->
+    <div class="filters">
+        <h2>🔍 Filter Listings</h2>
+        <form method="get" action="/dashboard">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="min_price">Min Price ($)</label>
+                    <input type="number" id="min_price" name="min_price" placeholder="500" value="{{ filters.min_price }}" min="0" step="50">
+                </div>
+                <div class="filter-group">
+                    <label for="max_price">Max Price ($)</label>
+                    <input type="number" id="max_price" name="max_price" placeholder="5000" value="{{ filters.max_price }}" min="0" step="50">
+                </div>
+                <div class="filter-group">
+                    <label for="neighborhood">Neighborhood</label>
+                    <select id="neighborhood" name="neighborhood">
+                        <option value="">All Neighborhoods</option>
+                        {% for hood in all_neighborhoods %}
+                            <option value="{{ hood }}" {% if filters.neighborhood == hood %}selected{% endif %}>{{ hood }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="keyword">Keyword Search</label>
+                    <input type="text" id="keyword" name="keyword" placeholder="studio, parking, etc." value="{{ filters.keyword }}">
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="filter-button filter-button-primary">Apply Filters</button>
+                <button type="button" class="filter-button filter-button-secondary" onclick="clearFilters()">Clear All</button>
+            </div>
+        </form>
+    </div>
+
+    {% if filters.min_price or filters.max_price or filters.neighborhood or filters.keyword %}
+        <p class="results-count">Found {{ listings|length }} listing(s) matching your filters</p>
+    {% endif %}
 
     {% if listings %}
         <div class="listing-grid">
@@ -239,12 +581,25 @@
         </div>
     {% endif %}
 </main>
+<footer style="margin-top: 48px; padding: 32px 24px; text-align: center; color: var(--text-muted); border-top: 1px solid var(--border);">
+    <p>
+        <a href="/" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Home</a>
+        <a href="/terms" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Terms of Service</a>
+        <a href="/privacy" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Privacy Policy</a>
+        <a href="mailto:support@craiseek.com" style="color: var(--primary); text-decoration: none; margin: 0 12px;">Support</a>
+    </p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
+</footer>
 <script>
-    // Theme toggle functionality
+    // Theme toggle functionality with animation
     function toggleTheme() {
         const html = document.documentElement;
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        // Add transition effect
+        document.body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+        
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
     }
@@ -254,6 +609,38 @@
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     })();
+    
+    // Staggered animation for listing cards
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.listing-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    });
+
+    function clearFilters() {
+        window.location.href = '/dashboard';
+    }
+    
+    // Mobile menu toggle
+    function toggleMenu() {
+        const nav = document.getElementById('main-nav');
+        const menuToggle = document.querySelector('.menu-toggle');
+        nav.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    }
+    
+    // Close mobile menu when clicking a link
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('#main-nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleMenu();
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>

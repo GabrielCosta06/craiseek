@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ · Craiseek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --bg-main: #f8fafc;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        header a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+        header a svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header a:hover svg {
+            opacity: 1;
+        }
+        header a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 2px;
+        }
+        header a.active::before {
+            transform: scaleX(1);
+        }
+        header a:hover {
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        header a:hover::before {
+            transform: scaleX(1);
+        }
+        [data-theme="dark"] header a:hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+        main {
+            max-width: 800px;
+            margin: 48px auto;
+            padding: 0 24px 96px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 48px;
+        }
+        .faq-section {
+            margin-bottom: 48px;
+        }
+        .faq-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+        .faq-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: all 0.2s ease;
+        }
+        .faq-item:hover {
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        .faq-question {
+            padding: 20px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text);
+            user-select: none;
+        }
+        .faq-question:hover {
+            color: var(--primary);
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+            color: var(--primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 24px;
+            color: var(--text-muted);
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 24px 20px;
+        }
+        .faq-answer p {
+            margin: 0 0 12px 0;
+        }
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+        .faq-answer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .faq-answer a:hover {
+            text-decoration: underline;
+        }
+        .faq-answer ul {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+        .faq-answer li {
+            margin-bottom: 8px;
+        }
+        .contact-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(56, 189, 248, 0.05));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        [data-theme="dark"] .contact-box {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(56, 189, 248, 0.05));
+        }
+        .contact-box h3 {
+            margin-top: 0;
+            color: var(--text);
+        }
+        .contact-box p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .contact-button {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            border-radius: 999px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+        footer {
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+        footer a {
+            color: var(--primary);
+            margin: 0 12px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
+    <nav>
+        <a href="/">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/dashboard">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Dashboard
+        </a>
+        <a href="/subscribe">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Plans
+        </a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
+    </nav>
+</header>
+<main>
+    <h1>Frequently Asked Questions</h1>
+    <p class="subtitle">Everything you need to know about Craiseek rental alerts.</p>
+
+    <!-- Getting Started -->
+    <div class="faq-section">
+        <h2>Getting Started</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>What is Craiseek?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Craiseek is a real-time rental listing alert service that monitors Craigslist for new apartment and rental postings. We scan Craigslist every few minutes and send instant alerts via SMS, WhatsApp, or email so you can respond to listings before everyone else.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How do I sign up?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Simply visit our <a href="/subscribe">Plans page</a>, choose your preferred tier (Free, Essential, or Elite), and provide your contact information. For paid plans, you'll complete checkout through Stripe. For the free plan, verify your email to start receiving daily digests.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Which plan should I choose?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>It depends on how urgently you need housing:</p>
+                <ul>
+                    <li><strong>Scout (Free):</strong> Best for casual browsers who want daily email summaries</li>
+                    <li><strong>Essential ($3.90/month):</strong> Perfect for active searchers who need instant alerts via one channel</li>
+                    <li><strong>Elite ($6.90/month):</strong> Ideal for competitive markets where speed matters—get simultaneous alerts via SMS, WhatsApp, and email</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="faq-section">
+        <h2>How It Works</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How often do you scan Craigslist?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We scan Craigslist approximately every 5 minutes for our paid subscribers. Free tier users receive a daily digest of the top listings from the previous 24 hours.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How fast will I receive alerts?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Essential and Elite subscribers receive alerts within seconds to minutes of a new listing appearing on Craigslist. The exact timing depends on when our scraper runs its next cycle and network delivery times.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Can I customize which neighborhoods I monitor?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Currently, alerts include all available listings. You can filter listings on your dashboard by neighborhood, price range, and keywords. Custom neighborhood alerts are planned for a future release.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>What information do alerts include?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Each alert includes the listing title, price, neighborhood (when available), and a direct link to the Craigslist posting so you can view photos and contact the landlord immediately.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account & Billing -->
+    <div class="faq-section">
+        <h2>Account & Billing</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How do I change my alert channel?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>For Essential subscribers, visit the <a href="/subscribe">Plans page</a> to change between SMS, WhatsApp, or email. Elite subscribers receive alerts on all channels simultaneously. Changes take effect immediately.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Can I cancel anytime?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes! You can cancel your subscription anytime from your <a href="/settings">Account Settings</a>. Cancellation takes effect at the end of your current billing period. No refunds are provided for partial months.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How do I update my phone number or email?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Contact our support team at <a href="mailto:support@craiseek.com">support@craiseek.com</a> with your current and new contact information. We'll update your account within 24 hours.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>What payment methods do you accept?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We accept all major credit and debit cards through Stripe, including Visa, Mastercard, American Express, and Discover. All payments are processed securely and we never store your card details.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="faq-section">
+        <h2>Troubleshooting</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>I'm not receiving alerts. What should I do?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>First, check that:</p>
+                <ul>
+                    <li>Your subscription is active (check <a href="/settings">Settings</a>)</li>
+                    <li>For email: Check your spam/junk folder and whitelist noreply@craiseek.com</li>
+                    <li>For SMS: Verify your phone number is correct in your account</li>
+                    <li>There are new listings in your area (check the <a href="/dashboard">Dashboard</a>)</li>
+                </ul>
+                <p>If issues persist, contact <a href="mailto:support@craiseek.com">support@craiseek.com</a>.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Why do some listings not have a price or neighborhood?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We display exactly what the landlord posted on Craigslist. If they didn't include a price or neighborhood, we can't add that information. However, the listing link will take you directly to Craigslist where you can view all available details.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>I received a duplicate alert. Is this a bug?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We work hard to prevent duplicates, but occasionally landlords repost the same listing with slight changes, which our system treats as new. If you experience frequent duplicates, please let us know at <a href="mailto:support@craiseek.com">support@craiseek.com</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Safety & Privacy -->
+    <div class="faq-section">
+        <h2>Safety & Privacy</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>How do I avoid rental scams?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We deliver listings from Craigslist but cannot verify their legitimacy. Protect yourself by:</p>
+                <ul>
+                    <li>Never send money before seeing the property in person</li>
+                    <li>Be wary of prices significantly below market rate</li>
+                    <li>Meet landlords at the property, not remote locations</li>
+                    <li>Don't share personal financial information upfront</li>
+                    <li>Use Craigslist's scam warning resources</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>What do you do with my data?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>We only use your contact information to send rental alerts and account notifications. We never sell your data to third parties. Read our full <a href="/privacy">Privacy Policy</a> for details on data collection, storage, and your rights.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Is my payment information secure?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes. All payments are processed through Stripe, a PCI-compliant payment processor used by millions of businesses. We never see or store your full card details.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Box -->
+    <div class="contact-box">
+        <h3>Still have questions?</h3>
+        <p>Can't find the answer you're looking for? Our support team is here to help.</p>
+        <a href="mailto:support@craiseek.com" class="contact-button">Contact Support</a>
+    </div>
+</main>
+<footer>
+    <p>
+        <a href="/">Home</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/faq">FAQ</a>
+    </p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
+</footer>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+
+    // FAQ accordion
+    function toggleFAQ(element) {
+        const faqItem = element.parentElement;
+        const isActive = faqItem.classList.contains('active');
+        
+        // Close all other FAQs
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Toggle current FAQ
+        if (!isActive) {
+            faqItem.classList.add('active');
+        }
+    }
+</script>
+</body>
+</html>

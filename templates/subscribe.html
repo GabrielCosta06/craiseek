@@ -41,12 +41,13 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         header {
-            padding: 20px 24px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 1080px;
+            max-width: 1200px;
             margin: 0 auto;
+            gap: 24px;
         }
         header .brand {
             display: flex;
@@ -54,40 +55,96 @@
             gap: 12px;
             font-weight: 700;
             color: var(--primary);
+            text-decoration: none;
+            font-size: 1.3rem;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         header .brand span {
             display: inline-flex;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 999px;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             color: #fff;
+            font-size: 1.1rem;
         }
         header nav {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
-        header nav a, header nav button {
-            margin-left: 18px;
+        header nav a, header nav button:not(.theme-toggle) {
+            padding: 8px 14px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text);
             text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
         }
-        header nav button {
+        header nav a svg, header nav button:not(.theme-toggle) svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header nav a:hover svg, header nav button:not(.theme-toggle):hover svg {
+            opacity: 1;
+        }
+        header nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 2px;
+        }
+        header nav a.active::before {
+            transform: scaleX(1);
+        }
+        header nav button:not(.theme-toggle) {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 0;
         }
-        header nav a:hover, header nav button:hover {
+        header nav a:hover, header nav button:not(.theme-toggle):hover {
             color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        header nav a:hover::before {
+            transform: scaleX(1);
+        }
+        [data-theme="dark"] header nav a:hover,
+        [data-theme="dark"] header nav button:not(.theme-toggle):hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+        header nav form {
+            display: inline-flex;
+            margin: 0;
+        }
+        header nav form button:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.08);
         }
         .theme-toggle {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid var(--border);
             background: var(--bg-surface);
@@ -96,11 +153,21 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            margin-left: 12px;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
         }
         .theme-toggle:hover {
             border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
             transform: rotate(180deg);
+            color: #fff;
         }
         main {
             max-width: 1080px;
@@ -253,10 +320,12 @@
         .radio-group {
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
         }
         .radio-group label {
-            flex: 1;
-            padding: 12px;
+            flex: 1 1 calc(33.333% - 8px);
+            min-width: 100px;
+            padding: 12px 8px;
             border-radius: 12px;
             border: 1px solid var(--border);
             background: var(--bg-main);
@@ -266,6 +335,7 @@
             gap: 8px;
             cursor: pointer;
             transition: border-color 0.2s ease, transform 0.2s ease;
+            white-space: nowrap;
         }
         .radio-group input[type="radio"] {
             accent-color: var(--primary);
@@ -295,6 +365,15 @@
             cursor: not-allowed;
             box-shadow: none;
         }
+        button.cta .button-loading {
+            display: none;
+        }
+        button.cta.loading .button-text {
+            display: none;
+        }
+        button.cta.loading .button-loading {
+            display: inline;
+        }
         .note {
             font-size: 0.9rem;
             color: var(--text-muted);
@@ -312,35 +391,103 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @media (max-width: 900px) {
+            .plans {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
         @media (max-width: 720px) {
             header {
                 flex-direction: column;
                 gap: 12px;
             }
-            header nav a, header nav button {
-                margin-left: 12px;
+            header nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            header nav a, header nav button:not(.theme-toggle) {
+                margin-left: 8px;
+                font-size: 0.9rem;
+            }
+            main {
+                padding: 32px 16px;
+            }
+            h1 {
+                font-size: 2rem;
             }
             .radio-group {
                 flex-direction: column;
+            }
+            .radio-group label {
+                flex: 1 1 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            header {
+                padding: 12px 16px;
+            }
+            .brand {
+                font-size: 1.2rem;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+            .subtitle {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
 <header>
-    <div class="brand"><span>C</span> Craiseek</div>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
     <nav>
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
+        <a href="/">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/dashboard">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Dashboard
+        </a>
+        <a href="/faq">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            FAQ
+        </a>
         {% if user %}
-            <form action="/logout" method="post" style="display:inline;">
-                <button type="submit">Log out</button>
+            <a href="/settings">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Settings
+            </a>
+            <form action="/logout" method="post">
+                <button type="submit">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Sign Out
+                </button>
             </form>
         {% else %}
-            <a href="/login">Log in</a>
+            <a href="/login">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+                Sign In
+            </a>
         {% endif %}
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
                 <path class="sun" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
             </svg>
         </button>
@@ -377,7 +524,7 @@
                         <span class="note">Daily email digest, cancel anytime.</span>
                     </form>
                 {% elif plan.id == 'essential' %}
-                    <form action="/buy" method="post">
+                    <form action="/buy" method="post" class="payment-form" data-plan="essential">
                         <input type="hidden" name="plan" value="essential">
                         <div class="radio-group">
                             <label>
@@ -394,7 +541,8 @@
                             </label>
                         </div>
                         <button class="cta" type="submit" {% if not stripe_available %}disabled{% endif %}>
-                            {{ plan.action }}
+                            <span class="button-text">{{ plan.action }}</span>
+                            <span class="button-loading" style="display:none;">Processing...</span>
                         </button>
                         {% if not stripe_available %}
                             <span class="note">Stripe is not configured. Contact support to enable payments.</span>
@@ -403,10 +551,11 @@
                         {% endif %}
                     </form>
                 {% elif plan.id == 'elite' %}
-                    <form action="/buy" method="post">
+                    <form action="/buy" method="post" class="payment-form" data-plan="elite">
                         <input type="hidden" name="plan" value="elite">
                         <button class="cta" type="submit" {% if not stripe_available %}disabled{% endif %}>
-                            {{ plan.action }}
+                            <span class="button-text">{{ plan.action }}</span>
+                            <span class="button-loading" style="display:none;">Processing...</span>
                         </button>
                         {% if not stripe_available %}
                             <span class="note">Stripe is not configured. Contact support to enable payments.</span>
@@ -420,7 +569,14 @@
     </div>
 </main>
 <footer>
-    Pricing in USD · Cancel whenever · Support: support@craiseek.com
+    <p>
+        <a href="/">Home</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="mailto:support@craiseek.com">Support</a>
+    </p>
+    <p>Pricing in USD · Cancel whenever</p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
 </footer>
 <script>
     // Theme toggle functionality
@@ -449,6 +605,52 @@
     }, { threshold: 0.2 });
 
     document.querySelectorAll('.fade-plan').forEach(el => observer.observe(el));
+
+    // Handle payment form submissions
+    document.querySelectorAll('.payment-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = form.querySelector('button[type="submit"]');
+            const buttonText = button.querySelector('.button-text');
+            const buttonLoading = button.querySelector('.button-loading');
+            
+            // Show loading state
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            try {
+                const formData = new FormData(form);
+                const response = await fetch('/buy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Payment initialization failed');
+                }
+                
+                const data = await response.json();
+                
+                if (data.checkout_url) {
+                    // Redirect to Stripe Checkout
+                    window.location.href = data.checkout_url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Unable to start checkout. Please try again or contact support.');
+                
+                // Reset button state
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        });
+    });
 </script>
 </body>
 </html>

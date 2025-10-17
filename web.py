@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import secrets
 from typing import Dict, Optional
 from urllib.parse import parse_qs
 
@@ -17,6 +18,8 @@ from db import (
     create_session,
     delete_session,
     get_recent_listings,
+    get_filtered_listings,
+    get_all_neighborhoods,
     get_subscriber_count,
     get_listing_count,
     get_unique_neighborhoods,
@@ -24,6 +27,9 @@ from db import (
     get_user_by_session,
     upsert_subscriber,
     insert_user,
+    set_verification_token,
+    verify_email,
+    get_subscriber_by_email,
 )
 
 logger = logging.getLogger(__name__)
@@ -128,6 +134,10 @@ def _subscription_context(
 @app.get("/", name="landing", response_class=HTMLResponse)
 async def landing(request: Request) -> HTMLResponse:
     """Render the marketing landing page."""
+    # Check for success/cancel from Stripe
+    if request.query_params.get("success") == "true":
+        return RedirectResponse(url="/success", status_code=status.HTTP_303_SEE_OTHER)
+    
     subscriber_count = get_subscriber_count()
     fomo_remaining = max(0, 20 - subscriber_count)
     listing_count = get_listing_count()
@@ -156,8 +166,11 @@ async def subscribe_page(request: Request) -> HTMLResponse:
     message = None
     message_type = None
     if status_flag == "free":
-        message = "Free plan activated! Check your inbox for the next digest."
+        message = "Email verified! You'll receive your next digest soon."
         message_type = "success"
+    elif status_flag == "free_pending":
+        message = "Check your email to verify your subscription and start receiving alerts."
+        message_type = "info"
     elif status_flag == "paid":
         message = "Thanks! Finish checkout to start receiving premium alerts."
         message_type = "info"
@@ -178,8 +191,22 @@ async def subscribe_free(request: Request) -> Response:
         )
         return templates.TemplateResponse("subscribe.html", context, status_code=status.HTTP_400_BAD_REQUEST)
 
+    # Generate verification token
+    verification_token = secrets.token_urlsafe(32)
+    
+    # Create or update subscriber
     upsert_subscriber(tier="FREE", channels=["email"], email=email)
-    response = RedirectResponse(url="/subscribe?status=free", status_code=status.HTTP_303_SEE_OTHER)
+    set_verification_token(email, verification_token)
+    
+    # In production, send verification email here
+    # For now, we'll log the verification link
+    verification_url = f"{request.base_url}verify-email?token={verification_token}"
+    logger.info(f"Email verification URL (send this in email): {verification_url}")
+    
+    # TODO: Send actual email when email service is configured
+    # Example: send_verification_email(email, verification_url)
+    
+    response = RedirectResponse(url="/subscribe?status=free_pending", status_code=status.HTTP_303_SEE_OTHER)
     return response
 
 
@@ -408,10 +435,121 @@ async def dashboard(request: Request) -> HTMLResponse:
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
-    listings = get_recent_listings()
+    # Get filter parameters
+    min_price = request.query_params.get("min_price")
+    max_price = request.query_params.get("max_price")
+    neighborhood = request.query_params.get("neighborhood")
+    keyword = request.query_params.get("keyword")
+    
+    # Convert price strings to integers
+    min_price_int = None
+    max_price_int = None
+    if min_price and min_price.strip():
+        try:
+            min_price_int = int(min_price)
+        except ValueError:
+            pass
+    if max_price and max_price.strip():
+        try:
+            max_price_int = int(max_price)
+        except ValueError:
+            pass
+    
+    # Get filtered or all listings
+    if any([min_price_int, max_price_int, neighborhood, keyword]):
+        listings = get_filtered_listings(
+            min_price=min_price_int,
+            max_price=max_price_int,
+            neighborhood=neighborhood if neighborhood else None,
+            keyword=keyword if keyword else None,
+            limit=50
+        )
+    else:
+        listings = get_recent_listings(limit=50)
+    
+    # Get all neighborhoods for filter dropdown
+    all_neighborhoods = get_all_neighborhoods()
+    
     context = {
         "request": request,
         "user": user,
         "listings": listings,
+        "all_neighborhoods": all_neighborhoods,
+        "filters": {
+            "min_price": min_price or "",
+            "max_price": max_price or "",
+            "neighborhood": neighborhood or "",
+            "keyword": keyword or "",
+        }
     }
     return templates.TemplateResponse("dashboard.html", context)
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy_policy(request: Request) -> HTMLResponse:
+    """Render the privacy policy page."""
+    return templates.TemplateResponse("privacy.html", {"request": request, "user": _current_user(request)})
+
+
+@app.get("/terms", response_class=HTMLResponse)
+async def terms_of_service(request: Request) -> HTMLResponse:
+    """Render the terms of service page."""
+    return templates.TemplateResponse("terms.html", {"request": request, "user": _current_user(request)})
+
+
+@app.get("/verify-email", response_class=HTMLResponse)
+async def verify_email_endpoint(request: Request) -> Response:
+    """Verify a user's email address using the verification token."""
+    token = request.query_params.get("token")
+    
+    if not token:
+        context = _subscription_context(
+            request,
+            message="Invalid verification link. Please check your email.",
+            message_type="error",
+        )
+        return templates.TemplateResponse("subscribe.html", context, status_code=status.HTTP_400_BAD_REQUEST)
+    
+    verified = verify_email(token)
+    
+    if verified:
+        return RedirectResponse(url="/subscribe?status=free", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        context = _subscription_context(
+            request,
+            message="Verification link expired or already used. Please subscribe again.",
+            message_type="error",
+        )
+        return templates.TemplateResponse("subscribe.html", context, status_code=status.HTTP_400_BAD_REQUEST)
+
+
+@app.get("/success", response_class=HTMLResponse)
+async def success_page(request: Request) -> HTMLResponse:
+    """Show success page after successful Stripe checkout."""
+    return templates.TemplateResponse("success.html", {"request": request, "user": _current_user(request)})
+
+
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request) -> HTMLResponse:
+    """Show account settings page."""
+    user = _current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    
+    # Try to find subscription by user email
+    subscription = get_subscriber_by_email(user.email)
+    
+    context = {
+        "request": request,
+        "user": user,
+        "subscription": subscription,
+        "message": request.query_params.get("message"),
+        "message_type": request.query_params.get("message_type", "info"),
+    }
+    return templates.TemplateResponse("settings.html", context)
+
+
+@app.get("/faq", response_class=HTMLResponse)
+async def faq_page(request: Request) -> HTMLResponse:
+    """Render the FAQ page."""
+    return templates.TemplateResponse("faq.html", {"request": request, "user": _current_user(request)})

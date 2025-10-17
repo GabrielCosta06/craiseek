@@ -92,6 +92,8 @@ def init_db() -> None:
         whatsapp TEXT,
         channel_preferences TEXT NOT NULL DEFAULT 'sms',
         tier TEXT NOT NULL DEFAULT 'FREE',
+        email_verified INTEGER DEFAULT 0,
+        verification_token TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -126,6 +128,10 @@ def _ensure_subscriber_schema(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE subscribers ADD COLUMN channel_preferences TEXT NOT NULL DEFAULT 'sms';")
     if "tier" not in columns:
         conn.execute("ALTER TABLE subscribers ADD COLUMN tier TEXT NOT NULL DEFAULT 'FREE';")
+    if "email_verified" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN email_verified INTEGER DEFAULT 0;")
+    if "verification_token" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN verification_token TEXT;")
 
     conn.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_subscribers_phone ON subscribers(phone) WHERE phone IS NOT NULL;"
@@ -140,6 +146,7 @@ def _ensure_subscriber_schema(conn: sqlite3.Connection) -> None:
         "UPDATE subscribers SET channel_preferences = 'sms' WHERE channel_preferences IS NULL OR TRIM(channel_preferences) = '';"
     )
     conn.execute("UPDATE subscribers SET tier = COALESCE(tier, 'FREE');")
+    conn.execute("UPDATE subscribers SET email_verified = 0 WHERE email_verified IS NULL;")
 
 
 def insert_listing(listing: Listing) -> bool:
@@ -404,6 +411,66 @@ def get_recent_listings(limit: int = 20) -> List[Listing]:
     ]
 
 
+def get_filtered_listings(
+    *,
+    min_price: Optional[int] = None,
+    max_price: Optional[int] = None,
+    neighborhood: Optional[str] = None,
+    keyword: Optional[str] = None,
+    limit: int = 50
+) -> List[Listing]:
+    """Return listings filtered by price, neighborhood, and/or keyword search."""
+    conditions = []
+    params = []
+    
+    # Price filtering - extract numbers from price strings
+    if min_price is not None:
+        conditions.append("CAST(REPLACE(REPLACE(REPLACE(price, '$', ''), ',', ''), ' ', '') AS INTEGER) >= ?")
+        params.append(min_price)
+    
+    if max_price is not None:
+        conditions.append("CAST(REPLACE(REPLACE(REPLACE(price, '$', ''), ',', ''), ' ', '') AS INTEGER) <= ?")
+        params.append(max_price)
+    
+    # Neighborhood filtering
+    if neighborhood:
+        conditions.append("LOWER(neighborhood) = LOWER(?)")
+        params.append(neighborhood)
+    
+    # Keyword search in title
+    if keyword:
+        conditions.append("LOWER(title) LIKE LOWER(?)")
+        params.append(f"%{keyword}%")
+    
+    where_clause = " AND ".join(conditions) if conditions else "1=1"
+    
+    query = f"""
+    SELECT post_id, title, price, neighborhood, url, created_at, notified_at
+    FROM listings
+    WHERE {where_clause}
+    ORDER BY datetime(created_at) DESC
+    LIMIT ?;
+    """
+    
+    params.append(limit)
+    
+    with get_connection() as conn:
+        rows = conn.execute(query, tuple(params)).fetchall()
+    
+    return [
+        Listing(
+            post_id=row["post_id"],
+            title=row["title"],
+            price=row["price"],
+            neighborhood=row["neighborhood"],
+            url=row["url"],
+            created_at=row["created_at"],
+            notified_at=row["notified_at"],
+        )
+        for row in rows
+    ]
+
+
 def get_listing_count() -> int:
     """Return total number of listings stored."""
     query = "SELECT COUNT(*) FROM listings;"
@@ -424,6 +491,74 @@ def get_unique_neighborhoods(limit: int = 6) -> List[str]:
     with get_connection() as conn:
         rows = conn.execute(query, (limit,)).fetchall()
     return [row["neighborhood"] for row in rows if row["neighborhood"]]
+
+
+def get_all_neighborhoods() -> List[str]:
+    """Return all unique neighborhoods sorted alphabetically."""
+    query = """
+    SELECT DISTINCT neighborhood
+    FROM listings
+    WHERE neighborhood IS NOT NULL AND neighborhood != ''
+    ORDER BY neighborhood ASC;
+    """
+    with get_connection() as conn:
+        rows = conn.execute(query).fetchall()
+    return [row["neighborhood"] for row in rows if row["neighborhood"]]
+
+
+def set_verification_token(email: str, token: str) -> bool:
+    """Set verification token for a subscriber email."""
+    query = """
+    UPDATE subscribers
+    SET verification_token = ?, email_verified = 0
+    WHERE email = ?;
+    """
+    with get_connection() as conn:
+        cursor = conn.execute(query, (token, email))
+        updated = cursor.rowcount > 0
+    return updated
+
+
+def verify_email(token: str) -> bool:
+    """Verify an email using the verification token."""
+    query = """
+    UPDATE subscribers
+    SET email_verified = 1, verification_token = NULL
+    WHERE verification_token = ? AND email_verified = 0;
+    """
+    with get_connection() as conn:
+        cursor = conn.execute(query, (token,))
+        updated = cursor.rowcount > 0
+    if updated:
+        logger.info("Email verified successfully", extra={"token": token[:8]})
+    return updated
+
+
+def get_subscriber_by_email(email: str) -> Optional[Subscriber]:
+    """Fetch a subscriber by email."""
+    query = """
+    SELECT id, phone, email, whatsapp, channel_preferences, tier, created_at
+    FROM subscribers
+    WHERE email = ?;
+    """
+    with get_connection() as conn:
+        row = conn.execute(query, (email,)).fetchone()
+    if not row:
+        return None
+    
+    channels = [channel.strip() for channel in (row["channel_preferences"] or "").split(",") if channel.strip()]
+    if not channels:
+        channels = ["email"]
+    
+    return Subscriber(
+        id=row["id"],
+        tier=row["tier"] or "FREE",
+        channel_preferences=channels,
+        phone=row["phone"],
+        email=row["email"],
+        whatsapp=row["whatsapp"],
+        created_at=row["created_at"],
+    )
 
 
 # Ensure the database schema exists on import.

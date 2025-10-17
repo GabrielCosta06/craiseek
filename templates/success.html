@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Craiseek! 🎉</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --success: #10b981;
+            --bg-main: #f8fafc;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --success: #34d399;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        header a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 16px;
+            transition: color 0.2s ease;
+        }
+        header a:hover {
+            color: var(--accent);
+        }
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+        main {
+            max-width: 680px;
+            margin: 80px auto;
+            padding: 0 24px 96px;
+            text-align: center;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--success), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease;
+        }
+        .success-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 16px;
+            background: linear-gradient(135deg, var(--success), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideUp 0.6s ease;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            animation: slideUp 0.8s ease;
+        }
+        .next-steps {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 32px;
+            text-align: left;
+            box-shadow: 0 12px 32px var(--shadow);
+            animation: slideUp 1s ease;
+        }
+        .next-steps h2 {
+            margin-top: 0;
+            font-size: 1.6rem;
+            color: var(--text);
+        }
+        .step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--bg-main);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .step:hover {
+            transform: translateX(4px);
+        }
+        .step-number {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .step-content h3 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+        .step-content p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideUp 1.2s ease;
+        }
+        .cta-button {
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cta-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+        }
+        .cta-secondary {
+            background: var(--bg-surface);
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        .cta-secondary:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+            animation: slideUp 1.4s ease;
+        }
+        [data-theme="dark"] .info-box {
+            background: rgba(96, 165, 250, 0.15);
+        }
+        .info-box p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+        footer {
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+        footer a {
+            color: var(--primary);
+            margin: 0 12px;
+            text-decoration: none;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .next-steps { padding: 24px; }
+            .cta-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/settings">Settings</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
+    </nav>
+</header>
+<main>
+    <div class="success-icon">
+        <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    </div>
+    
+    <h1>You're all set! 🎉</h1>
+    <p class="subtitle">Your subscription is active and alerts are flowing your way.</p>
+
+    <div class="next-steps">
+        <h2>What happens next?</h2>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>We're already scanning</h3>
+                <p>Our scraper checks Craigslist every few minutes for new rental listings matching your area.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>You'll get instant alerts</h3>
+                <p>When we spot a fresh listing, we'll send it straight to your chosen channel (SMS, WhatsApp, or email) within seconds.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3>Browse anytime on your dashboard</h3>
+                <p>Check recent listings, filter by neighborhood, and track trends in real-time from your personalized dashboard.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3>Customize your preferences</h3>
+                <p>Head to settings to update your alert channels, manage neighborhoods, or adjust your subscription anytime.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-group">
+        <a href="/dashboard" class="cta-button cta-primary">
+            View Dashboard →
+        </a>
+        <a href="/settings" class="cta-button cta-secondary">
+            Manage Settings
+        </a>
+    </div>
+
+    <div class="info-box">
+        <p><strong>💡 Pro tip:</strong> Bookmark your dashboard and check it daily to spot trends. The fastest renters combine alerts with regular browsing to never miss a gem.</p>
+    </div>
+</main>
+<footer>
+    <p>
+        <a href="/">Home</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="mailto:support@craiseek.com">Support</a>
+    </p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
+</footer>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+</script>
+</body>
+</html>

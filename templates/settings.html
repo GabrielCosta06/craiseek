@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings · Craiseek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-main: #f8fafc;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        header a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+        header a svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        header a:hover svg {
+            opacity: 1;
+        }
+        header a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 2px;
+        }
+        header a.active::before {
+            transform: scaleX(1);
+        }
+        header a:hover {
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: var(--border);
+        }
+        header a:hover::before {
+            transform: scaleX(1);
+        }
+        [data-theme="dark"] header a:hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        main {
+            max-width: 800px;
+            margin: 48px auto;
+            padding: 0 24px 96px;
+            animation: fadeInUp 0.6s ease;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin-top: 0;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.4s ease;
+        }
+        .section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px var(--shadow);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
+        }
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:hover {
+            box-shadow: 0 12px 32px var(--shadow);
+            transform: translateY(-2px);
+        }
+        .section h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .info-value {
+            color: var(--text-muted);
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+        }
+        .badge:hover {
+            transform: scale(1.05);
+        }
+        .badge-free {
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--text-muted);
+        }
+        .badge-essential {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--primary);
+        }
+        .badge-elite {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(37, 99, 235, 0.2));
+            color: var(--primary);
+        }
+        .badge-verified {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        button, .button {
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        button:active, .button:active {
+            transform: scale(0.97);
+        }
+        .button-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+        .button-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .button-secondary {
+            background: var(--bg-main);
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        .button-secondary:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .button-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .button-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            animation: slideDown 0.4s ease;
+        }
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--text);
+        }
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--text);
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--text);
+        }
+        footer {
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+        footer a {
+            color: var(--primary);
+            margin: 0 12px;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
+    <nav>
+        <a href="/">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/dashboard">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Dashboard
+        </a>
+        <a href="/faq">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            FAQ
+        </a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                <path class="sun" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
+    </nav>
+</header>
+<main>
+    <h1>Account Settings</h1>
+
+    {% if message %}
+        <div class="alert alert-{{ message_type or 'info' }}">{{ message }}</div>
+    {% endif %}
+
+    <!-- Account Information -->
+    <div class="section">
+        <h2>Account Information</h2>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</span>
+        </div>
+    </div>
+
+    <!-- Subscription Details -->
+    <div class="section">
+        <h2>Subscription</h2>
+        {% if subscription %}
+            <div class="info-row">
+                <span class="info-label">Current Plan</span>
+                <span class="badge badge-{{ subscription.tier.lower() }}">{{ subscription.tier }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Alert Channels</span>
+                <span class="info-value">{{ subscription.channel_preferences|join(', ')|title }}</span>
+            </div>
+            {% if subscription.phone %}
+            <div class="info-row">
+                <span class="info-label">Phone Number</span>
+                <span class="info-value">{{ subscription.phone }}</span>
+            </div>
+            {% endif %}
+            {% if subscription.email %}
+            <div class="info-row">
+                <span class="info-label">Alert Email</span>
+                <span class="info-value">{{ subscription.email }}</span>
+            </div>
+            {% endif %}
+            <div class="button-group">
+                <a href="/subscribe" class="button button-secondary">Change Plan</a>
+                {% if subscription.tier != 'FREE' %}
+                <a href="https://billing.stripe.com/p/login/test_placeholder" target="_blank" class="button button-secondary">Manage Billing</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="info-value">You don't have an active subscription yet.</p>
+            <div class="button-group">
+                <a href="/subscribe" class="button button-primary">Subscribe Now</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Alert Preferences -->
+    <div class="section">
+        <h2>Alert Preferences</h2>
+        <p class="info-value" style="margin-bottom: 16px;">
+            {% if subscription and subscription.tier == 'FREE' %}
+                Free tier receives daily email digests with top listings.
+            {% elif subscription and subscription.tier == 'ESSENTIAL' %}
+                Essential tier receives instant alerts via your chosen channel when new listings appear.
+            {% elif subscription and subscription.tier == 'ELITE' %}
+                Elite tier receives simultaneous alerts via SMS, WhatsApp, and email for maximum coverage.
+            {% else %}
+                Subscribe to customize your alert preferences.
+            {% endif %}
+        </p>
+        <div class="button-group">
+            <a href="/subscribe" class="button button-secondary">Update Preferences</a>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="section">
+        <h2 style="color: var(--danger);">Danger Zone</h2>
+        {% if subscription %}
+        <div class="alert alert-warning">
+            <strong>Cancel Subscription:</strong> Canceling will stop all alerts at the end of your current billing period. You can resubscribe anytime.
+        </div>
+        <div class="button-group">
+            <button class="button button-danger" onclick="confirmCancel()">Cancel Subscription</button>
+        </div>
+        {% endif %}
+        
+        <div class="alert alert-warning" style="margin-top: 24px;">
+            <strong>Delete Account:</strong> This permanently deletes your account and all associated data. This action cannot be undone.
+        </div>
+        <div class="button-group">
+            <button class="button button-danger" onclick="confirmDelete()">Delete Account</button>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>
+        <a href="/">Home</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="mailto:support@craiseek.com">Support</a>
+    </p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
+</footer>
+<script>
+    // Theme toggle functionality with animation
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        // Add transition effect
+        document.body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+        
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+    
+    // Add smooth reveal animations on scroll
+    function revealOnScroll() {
+        const sections = document.querySelectorAll('.section');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        sections.forEach(section => observer.observe(section));
+    }
+    
+    // Add ripple effect to buttons
+    function createRipple(event) {
+        const button = event.currentTarget;
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        button.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 600);
+    }
+    
+    // Add ripple CSS dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+        button, .button {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        .info-row {
+            transition: background 0.2s ease;
+        }
+        .info-row:hover {
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 8px;
+            padding-left: 12px;
+            padding-right: 12px;
+            margin-left: -12px;
+            margin-right: -12px;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        revealOnScroll();
+        
+        // Add ripple effect to all buttons
+        document.querySelectorAll('button, .button').forEach(button => {
+            button.addEventListener('click', createRipple);
+        });
+    });
+
+    function confirmCancel() {
+        if (confirm('Are you sure you want to cancel your subscription? Your alerts will stop at the end of the current billing period.')) {
+            // TODO: Implement cancellation endpoint
+            alert('Subscription cancellation will be implemented when Stripe is fully configured. For now, please contact support@craiseek.com');
+        }
+    }
+
+    function confirmDelete() {
+        const confirmation = prompt('This will permanently delete your account. Type "DELETE" to confirm:');
+        if (confirmation === 'DELETE') {
+            // TODO: Implement account deletion endpoint
+            alert('Account deletion will be implemented soon. For now, please contact support@craiseek.com');
+        }
+    }
+</script>
+</body>
+</html>

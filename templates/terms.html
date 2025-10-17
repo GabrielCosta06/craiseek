@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service · Craiseek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --bg-main: #f8fafc;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        header a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 16px;
+            transition: color 0.2s ease;
+        }
+        header a:hover {
+            color: var(--accent);
+        }
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .theme-toggle:hover svg {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+        main {
+            max-width: 800px;
+            margin: 48px auto;
+            padding: 0 24px 96px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        p {
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .contact-info {
+            background: var(--bg-surface);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-top: 32px;
+        }
+        footer {
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+        footer a {
+            color: var(--primary);
+            margin: 0 12px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/" class="brand"><span>C</span> Craiseek</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/subscribe">Plans</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
+    </nav>
+</header>
+<main>
+    <h1>Terms of Service</h1>
+    <p class="last-updated">Last Updated: October 17, 2025</p>
+
+    <p>Welcome to Craiseek. By accessing or using our service, you agree to be bound by these Terms of Service ("Terms"). Please read them carefully.</p>
+
+    <h2>1. Acceptance of Terms</h2>
+    
+    <p>By creating an account, subscribing to a plan, or using any part of Craiseek, you agree to these Terms, our <a href="/privacy">Privacy Policy</a>, and any additional guidelines or rules posted on the service. If you do not agree, you may not use Craiseek.</p>
+
+    <h2>2. Description of Service</h2>
+    
+    <p>Craiseek is a rental listing alert service that:</p>
+    <ul>
+        <li>Monitors Craigslist for new rental listings</li>
+        <li>Sends alerts via SMS, WhatsApp, or email based on your subscription tier</li>
+        <li>Provides a dashboard to view recent listings</li>
+        <li>Allows customization of alert preferences and neighborhoods</li>
+    </ul>
+
+    <p><strong>Important:</strong> Craiseek aggregates publicly available information from Craigslist. We do not verify listings, guarantee their accuracy, or endorse any landlord or property. Users must perform their own due diligence.</p>
+
+    <h2>3. Eligibility</h2>
+    
+    <p>You must be at least 18 years old to use Craiseek. By using the service, you represent and warrant that you meet this requirement.</p>
+
+    <h2>4. Account Registration</h2>
+    
+    <p>To access certain features, you must create an account. You agree to:</p>
+    <ul>
+        <li>Provide accurate, current, and complete information</li>
+        <li>Maintain the security of your password and account</li>
+        <li>Notify us immediately of any unauthorized access</li>
+        <li>Be responsible for all activities under your account</li>
+    </ul>
+
+    <p>We reserve the right to suspend or terminate accounts that violate these Terms or are inactive for extended periods.</p>
+
+    <h2>5. Subscription Plans and Billing</h2>
+    
+    <h3>5.1 Plan Tiers</h3>
+    <ul>
+        <li><strong>Scout (Free):</strong> Daily email digest with basic features</li>
+        <li><strong>Essential ($3.90/month):</strong> Instant alerts via one channel (SMS, WhatsApp, or email)</li>
+        <li><strong>Elite ($6.90/month):</strong> Simultaneous alerts via all channels with priority features</li>
+    </ul>
+
+    <h3>5.2 Payment Terms</h3>
+    <ul>
+        <li>Paid subscriptions are billed monthly in advance via Stripe</li>
+        <li>All fees are in USD and non-refundable except as required by law</li>
+        <li>You authorize us to charge your payment method on file for recurring subscriptions</li>
+        <li>Prices are subject to change with 30 days' notice</li>
+    </ul>
+
+    <h3>5.3 Cancellation and Refunds</h3>
+    <ul>
+        <li>You may cancel your subscription at any time from your account settings</li>
+        <li>Cancellations take effect at the end of the current billing period</li>
+        <li>No refunds are provided for partial months or unused service</li>
+        <li>The free tier may be canceled immediately without notice</li>
+    </ul>
+
+    <h2>6. Acceptable Use</h2>
+    
+    <p>You agree NOT to:</p>
+    <ul>
+        <li>Use the service for any illegal purpose or to violate any laws</li>
+        <li>Attempt to reverse engineer, scrape, or access the service through unauthorized means</li>
+        <li>Share your account credentials with others</li>
+        <li>Use automated systems or bots to access the service beyond your subscription tier</li>
+        <li>Interfere with or disrupt the service or servers</li>
+        <li>Impersonate others or provide false information</li>
+        <li>Use the service to spam, harass, or harm others</li>
+        <li>Resell or redistribute Craiseek alerts or data without permission</li>
+    </ul>
+
+    <p>Violation of these terms may result in immediate account suspension or termination.</p>
+
+    <h2>7. Intellectual Property</h2>
+    
+    <p>Craiseek and its original content, features, and functionality are owned by Craiseek and are protected by international copyright, trademark, and other intellectual property laws.</p>
+
+    <p>Craigslist listings and data remain the property of their respective owners. We merely aggregate and deliver publicly available information.</p>
+
+    <h2>8. Third-Party Services</h2>
+    
+    <p>Craiseek integrates with third-party services including:</p>
+    <ul>
+        <li><strong>Stripe:</strong> Payment processing</li>
+        <li><strong>Twilio:</strong> SMS and WhatsApp delivery (when configured)</li>
+        <li><strong>Craigslist:</strong> Source of listing data</li>
+    </ul>
+
+    <p>Your use of these third-party services is subject to their respective terms and privacy policies. We are not responsible for third-party service failures or changes.</p>
+
+    <h2>9. Service Availability and Modifications</h2>
+    
+    <p>We strive to provide reliable service but cannot guarantee:</p>
+    <ul>
+        <li>Uninterrupted or error-free operation</li>
+        <li>That all listings will be captured or delivered</li>
+        <li>Specific delivery times for alerts</li>
+        <li>Accuracy of listing data from Craigslist</li>
+    </ul>
+
+    <p>We reserve the right to:</p>
+    <ul>
+        <li>Modify, suspend, or discontinue any part of the service</li>
+        <li>Change features, pricing, or limits with reasonable notice</li>
+        <li>Implement rate limits or usage caps to ensure service quality</li>
+    </ul>
+
+    <h2>10. Disclaimers</h2>
+    
+    <p>CRAISEEK IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:</p>
+    <ul>
+        <li>Merchantability or fitness for a particular purpose</li>
+        <li>Non-infringement of third-party rights</li>
+        <li>Accuracy, completeness, or reliability of listing data</li>
+        <li>Availability of the service at all times</li>
+    </ul>
+
+    <p><strong>Rental Listings:</strong> We do not verify, endorse, or guarantee the legitimacy of any rental listing. You are solely responsible for evaluating properties, landlords, and rental agreements. Beware of scams and fraudulent listings.</p>
+
+    <h2>11. Limitation of Liability</h2>
+    
+    <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, CRAISEEK AND ITS AFFILIATES SHALL NOT BE LIABLE FOR:</p>
+    <ul>
+        <li>Indirect, incidental, consequential, or punitive damages</li>
+        <li>Loss of profits, revenue, data, or business opportunities</li>
+        <li>Damages arising from use or inability to use the service</li>
+        <li>Damages from fraudulent listings or interactions with landlords</li>
+        <li>Service interruptions, errors, or delays in alert delivery</li>
+    </ul>
+
+    <p>Our total liability for any claim shall not exceed the amount you paid us in the 12 months prior to the claim, or $50, whichever is greater.</p>
+
+    <h2>12. Indemnification</h2>
+    
+    <p>You agree to indemnify and hold harmless Craiseek, its affiliates, and their respective officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:</p>
+    <ul>
+        <li>Your use of the service</li>
+        <li>Your violation of these Terms</li>
+        <li>Your violation of any third-party rights</li>
+        <li>Your rental agreements or interactions with landlords</li>
+    </ul>
+
+    <h2>13. Dispute Resolution</h2>
+    
+    <h3>13.1 Informal Resolution</h3>
+    <p>Before filing a claim, you agree to contact us at <a href="mailto:support@craiseek.com">support@craiseek.com</a> to attempt informal resolution.</p>
+
+    <h3>13.2 Arbitration</h3>
+    <p>Any disputes arising from these Terms or your use of Craiseek shall be resolved through binding arbitration, except for disputes that may be brought in small claims court.</p>
+
+    <h3>13.3 Class Action Waiver</h3>
+    <p>You agree that disputes will be resolved individually, not as part of a class action or consolidated proceeding.</p>
+
+    <h2>14. Governing Law</h2>
+    
+    <p>These Terms are governed by the laws of the United States, without regard to conflict of law principles. Any legal action must be brought in the appropriate courts.</p>
+
+    <h2>15. Termination</h2>
+    
+    <p>We may terminate or suspend your access immediately, without notice, for:</p>
+    <ul>
+        <li>Violation of these Terms</li>
+        <li>Fraudulent or illegal activity</li>
+        <li>Non-payment of fees</li>
+        <li>At our discretion for any other reason</li>
+    </ul>
+
+    <p>Upon termination:</p>
+    <ul>
+        <li>Your right to use the service ceases immediately</li>
+        <li>No refunds will be provided for remaining subscription time</li>
+        <li>We may delete your account and data after a reasonable period</li>
+    </ul>
+
+    <h2>16. Changes to Terms</h2>
+    
+    <p>We may modify these Terms at any time. We will notify you of material changes by:</p>
+    <ul>
+        <li>Posting the updated Terms on this page</li>
+        <li>Updating the "Last Updated" date</li>
+        <li>Sending an email to your registered address (for significant changes)</li>
+    </ul>
+
+    <p>Your continued use of Craiseek after changes constitutes acceptance of the updated Terms.</p>
+
+    <h2>17. Severability</h2>
+    
+    <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full effect.</p>
+
+    <h2>18. Entire Agreement</h2>
+    
+    <p>These Terms, along with our Privacy Policy, constitute the entire agreement between you and Craiseek regarding the service and supersede all prior agreements.</p>
+
+    <h2>19. Contact Information</h2>
+    
+    <div class="contact-info">
+        <p>For questions about these Terms, please contact us:</p>
+        <p>
+            <strong>Email:</strong> <a href="mailto:support@craiseek.com">support@craiseek.com</a><br>
+            <strong>Legal:</strong> <a href="mailto:legal@craiseek.com">legal@craiseek.com</a>
+        </p>
+    </div>
+
+    <p style="margin-top: 48px; font-style: italic; color: var(--text-muted);">By using Craiseek, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
+</main>
+<footer>
+    <p>
+        <a href="/">Home</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+    </p>
+    <p>© 2025 Craiseek · Built by rental hunters for renters.</p>
+</footer>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+</script>
+</body>
+</html>
