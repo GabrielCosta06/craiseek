@@ -1,3 +1,4 @@
+"""FastAPI web application for Craiseek rental alert service."""
 from __future__ import annotations
 
 import logging
@@ -59,9 +60,9 @@ PLAN_DETAILS = [
         "price": "$3.90",
         "badge": "Most Popular",
         "frequency": "/month",
-        "tagline": "Pick SMS or email — instant alerts, zero delays.",
+        "tagline": "Pick SMS, WhatsApp or email — instant alerts, zero delays.",
         "features": [
-            "Instant alerts via your choice of SMS or email",
+            "Instant alerts via your choice of SMS, WhatsApp or email",
             "Unlimited neighborhood tracking",
             "Direct link payloads so you can respond faster",
             "Priority support in under 6 hours",
@@ -195,7 +196,7 @@ async def create_checkout_session(request: Request) -> JSONResponse:
     plan_config: Dict[str, Dict[str, object]] = {
         "essential": {
             "price_id": settings.stripe_price_id_essential,
-            "channels": [channel_choice if channel_choice in {"sms", "email"} else "sms"],
+            "channels": [channel_choice if channel_choice in {"sms", "email", "whatsapp"} else "sms"],
         },
         "elite": {
             "price_id": settings.stripe_price_id_elite,

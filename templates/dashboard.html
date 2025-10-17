@@ -8,25 +8,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --bg-main: #f1f5f9;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-            color: #0f172a;
+            background-color: var(--bg-main);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 24px;
-            background-color: #fff;
-            border-bottom: 1px solid #e2e8f0;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         header a {
-            color: #2563eb;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
             margin-right: 16px;
+            transition: color 0.2s ease;
+        }
+        header a:hover {
+            color: var(--accent);
         }
         header form {
             display: inline;
@@ -35,8 +86,33 @@
             background: none;
             border: none;
             font-weight: 600;
-            color: #64748b;
+            color: var(--text-muted);
             cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        header button:hover {
+            color: var(--primary);
+        }
+        .user-info {
+            color: var(--text-muted);
+            margin-right: 16px;
+        }
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-left: 12px;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            transform: rotate(180deg);
         }
         main {
             max-width: 880px;
@@ -46,64 +122,102 @@
         h1 {
             margin-top: 0;
             font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .intro {
             margin-bottom: 32px;
-            color: #475569;
+            color: var(--text-muted);
+            line-height: 1.6;
         }
         .listing-grid {
             display: grid;
             gap: 20px;
         }
         .listing-card {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            background-color: var(--bg-surface);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .listing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px var(--shadow);
         }
         .listing-card h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.2rem;
+            margin: 0 0 12px 0;
+            font-size: 1.25rem;
+            color: var(--text);
         }
         .listing-card .meta {
             display: flex;
             gap: 16px;
             font-family: 'Roboto Mono', monospace;
             font-size: 0.9rem;
-            color: #475569;
-            margin-bottom: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .listing-card .meta span {
+            padding: 6px 12px;
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 8px;
+        }
+        [data-theme="dark"] .listing-card .meta span {
+            background: rgba(96, 165, 250, 0.15);
         }
         .listing-card a {
-            color: #2563eb;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s ease;
+        }
+        .listing-card a:hover {
+            gap: 10px;
         }
         .empty-state {
             text-align: center;
             padding: 60px 24px;
-            background-color: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            background-color: var(--bg-surface);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .empty-state h2 {
+            color: var(--text);
         }
         .empty-state p {
-            color: #475569;
+            color: var(--text-muted);
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 <header>
-    <div>Craiseek</div>
-    <div>
-        <span>{{ user.email }}</span>
+    <div class="brand"><span>C</span> Craiseek</div>
+    <nav>
+        <span class="user-info">{{ user.email }}</span>
         <a href="/">Home</a>
+        <a href="/subscribe">Plans</a>
         <form action="/logout" method="post">
             <button type="submit">Log out</button>
         </form>
-    </div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path class="sun" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
+    </nav>
 </header>
 <main>
     <h1>Latest Rentals</h1>
-    <p class="intro">Browse real-time Craigslist finds. Subscribe for SMS alerts so you hear about them first.</p>
+    <p class="intro">Browse real-time Craigslist finds. Subscribe for instant alerts so you hear about them first.</p>
 
     {% if listings %}
         <div class="listing-grid">
@@ -121,10 +235,25 @@
     {% else %}
         <div class="empty-state">
             <h2>Fresh listings coming soon</h2>
-            <p>We haven't spotted any listings yet. Check back shortly or subscribe to get texts right away.</p>
+            <p>We haven't spotted any listings yet. Check back shortly or subscribe to get notified right away.</p>
         </div>
     {% endif %}
 </main>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+</script>
 </body>
 </html>
-

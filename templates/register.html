@@ -8,38 +8,113 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --bg-main: #f8fafc;
+            --bg-surface: #fff;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --error: #dc2626;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --accent: #38bdf8;
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --error: #fca5a5;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            background-color: var(--bg-main);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 24px;
-            background-color: #fff;
-            border-bottom: 1px solid #e2e8f0;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        header .brand span {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        header nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         header a {
-            color: #2563eb;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
             margin-left: 16px;
+            transition: color 0.2s ease;
+        }
+        header a:hover {
+            color: var(--accent);
+        }
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            transform: rotate(180deg);
         }
         main {
             max-width: 420px;
             margin: 60px auto;
-            background-color: #fff;
+            background-color: var(--bg-surface);
             padding: 32px;
-            border-radius: 12px;
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 12px 32px var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
         h1 {
             margin-top: 0;
             margin-bottom: 16px;
             font-size: 1.9rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         form {
             display: flex;
@@ -48,47 +123,78 @@
         label {
             font-weight: 600;
             margin-bottom: 8px;
+            color: var(--text);
         }
         input {
             margin-bottom: 18px;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #cbd5f5;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text);
             font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        [data-theme="dark"] input:focus {
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
         }
         button {
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 999px;
             border: none;
-            background-color: #2563eb;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: #fff;
             font-weight: 600;
             cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
         }
         button:hover {
-            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
         }
         .error {
-            color: #dc2626;
+            color: var(--error);
             margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--error);
+        }
+        [data-theme="dark"] .error {
+            background: rgba(239, 68, 68, 0.15);
         }
         .switch {
             margin-top: 16px;
             text-align: center;
+            color: var(--text-muted);
         }
         .switch a {
-            color: #2563eb;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+        }
+        .switch a:hover {
+            color: var(--accent);
         }
     </style>
 </head>
 <body>
 <header>
-    <div>Craiseek</div>
+    <div class="brand"><span>C</span> Craiseek</div>
     <nav>
         <a href="/">Home</a>
         <a href="/login">Log in</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+        </button>
     </nav>
 </header>
 <main>
@@ -107,6 +213,21 @@
     </form>
     <p class="switch">Already registered? <a href="/login">Log in</a>.</p>
 </main>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+</script>
 </body>
 </html>
-
