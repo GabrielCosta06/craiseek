@@ -34,6 +34,7 @@ class Settings:
     email_smtp_username: Optional[str]
     email_smtp_password: Optional[str]
     email_from_address: Optional[str]
+    admin_api_key: Optional[str]
 
     @property
     def twilio_configured(self) -> bool:
@@ -76,7 +77,7 @@ class Settings:
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Load settings at most once per process."""
-    database_path = os.getenv("DATABASE_PATH", "craigslist.db")
+    database_path = os.getenv("DATABASE_PATH", "marketseek.db")
     target_url = os.getenv("TARGET_URL", "")
     scrape_interval = int(os.getenv("SCRAPE_INTERVAL_SECONDS", "300"))
     request_timeout = int(os.getenv("REQUEST_TIMEOUT_SECONDS", "10"))
@@ -109,4 +110,5 @@ def get_settings() -> Settings:
         email_smtp_username=os.getenv("EMAIL_SMTP_USERNAME"),
         email_smtp_password=os.getenv("EMAIL_SMTP_PASSWORD"),
         email_from_address=os.getenv("EMAIL_FROM_ADDRESS"),
+        admin_api_key=os.getenv("ADMIN_API_KEY", "changeme"),
     )

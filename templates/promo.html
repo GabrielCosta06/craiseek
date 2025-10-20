@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 3-Day Free Trial + Referral Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .promo-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .promo-banner h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .promo-banner p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .promo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .promo-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .promo-card h3 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .promo-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .promo-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .promo-card li {
+            padding: 8px 0;
+            color: #444;
+        }
+        
+        .promo-card li::before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .referral-steps {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 40px auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .referral-steps h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: start;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .step-content p {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        
+        .highlight-box strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="promo-banner">
+        <h2>🎉 SPECIAL LAUNCH OFFER 🎉</h2>
+        <p>3-Day FREE Trial + Unlimited Referral Rewards</p>
+    </div>
+
+    <!-- Promo Cards -->
+    <div class="promo-grid">
+        <!-- Free Trial Card -->
+        <div class="promo-card">
+            <div class="promo-icon">🎁</div>
+            <h3>3-Day Free Trial</h3>
+            <p>Try Marketseek Essential with absolutely zero commitment!</p>
+            <ul>
+                <li>Full access to all features</li>
+                <li>No credit card required</li>
+                <li>Cancel anytime</li>
+                <li>Instant SMS/WhatsApp/Email alerts</li>
+                <li>Unlimited location tracking</li>
+            </ul>
+            <a href="/subscribe" class="cta-button">Start Free Trial →</a>
+        </div>
+
+        <!-- Referral Program Card -->
+        <div class="promo-card">
+            <div class="promo-icon">💰</div>
+            <h3>Referral Program</h3>
+            <p>Share with friends and earn FREE months!</p>
+            <ul>
+                <li>1 friend subscribes = 1 month FREE</li>
+                <li>Unlimited referrals accepted</li>
+                <li>Stack free months forever</li>
+                <li>Friends get 3-day trial too</li>
+                <li>Track all referrals in dashboard</li>
+            </ul>
+            <a href="/referrals" class="cta-button">Get My Code →</a>
+        </div>
+
+        <!-- How It Works Card -->
+        <div class="promo-card">
+            <div class="promo-icon">🚀</div>
+            <h3>Why Marketseek?</h3>
+            <p>Never miss a rental on Facebook Marketplace!</p>
+            <ul>
+                <li>Instant alerts when listings appear</li>
+                <li>Be the first to respond</li>
+                <li>Multiple alert channels</li>
+                <li>Track any location</li>
+                <li>Save time, find better places</li>
+            </ul>
+            <a href="/" class="cta-button">Learn More →</a>
+        </div>
+    </div>
+
+    <!-- How Referrals Work -->
+    <div class="referral-steps">
+        <h2>How Referrals Work</h2>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>📤 Share Your Code</h3>
+                <p>Get your unique referral code from your dashboard. Share it with friends via email, social media, or WhatsApp.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>🎁 They Get Free Trial</h3>
+                <p>Your friends use your code to sign up and get a 3-day FREE trial of Essential plan. No credit card needed!</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3>💳 They Subscribe</h3>
+                <p>After the trial, if they love it and subscribe to any paid plan (Essential or Elite), the magic happens...</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3>🎉 You Get Rewarded!</h3>
+                <p>You automatically receive 1 FREE MONTH added to your account. Stack unlimited months!</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>Important:</strong> Referral rewards are only granted when friends subscribe to a paid plan (Essential or Elite). Free trial signups alone don't count, but don't worry - you'll see them as "pending" in your dashboard!
+        </div>
+    </div>
+
+    <!-- Example Scenarios -->
+    <div class="referral-steps">
+        <h2>💡 Example Scenarios</h2>
+        
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+            <h4 style="color: #2e7d32; margin-bottom: 10px;">✅ Reward Granted</h4>
+            <p style="color: #333; margin: 0;">Your friend uses your code → Gets 3-day trial → Loves it → Subscribes to Essential for $3.90/month → <strong>You get 1 month FREE!</strong></p>
+        </div>
+
+        <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+            <h4 style="color: #e65100; margin-bottom: 10px;">⏳ Pending</h4>
+            <p style="color: #333; margin: 0;">Your friend uses your code → Gets 3-day trial → Trial is still active → <strong>Shows as "pending" in your dashboard</strong> → Will become rewarded if they subscribe</p>
+        </div>
+
+        <div style="background: #ffebee; padding: 20px; border-radius: 8px;">
+            <h4 style="color: #c62828; margin-bottom: 10px;">❌ No Reward</h4>
+            <p style="color: #333; margin: 0;">Your friend uses your code → Gets 3-day trial → Cancels before trial ends → <strong>No reward granted</strong> (but you can share with others!)</p>
+        </div>
+    </div>
+
+    <!-- FAQs -->
+    <div class="referral-steps">
+        <h2>❓ Frequently Asked Questions</h2>
+        
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #333;">Is there a limit to referrals?</h4>
+            <p style="color: #666;">Nope! Refer as many friends as you want and stack unlimited free months.</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #333;">When do I get my free month?</h4>
+            <p style="color: #666;">Immediately when your friend's paid subscription begins (after their trial ends).</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #333;">Can I use credits on any plan?</h4>
+            <p style="color: #666;">Yes! Your free month credits apply to both Essential and Elite plans.</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #333;">What if my friend cancels later?</h4>
+            <p style="color: #666;">You keep your free month! Once rewarded, it's yours forever.</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #333;">Do I need to be subscribed to refer?</h4>
+            <p style="color: #666;">You need any subscription (free or paid) to get a referral code. Free plan users can refer too!</p>
+        </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; max-width: 600px; margin: 40px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+        <h2 style="color: #333; margin-bottom: 15px;">Ready to Get Started?</h2>
+        <p style="color: #666; margin-bottom: 30px;">Try Essential free for 3 days, then start earning free months by sharing with friends!</p>
+        <a href="/subscribe" class="cta-button" style="font-size: 18px; padding: 15px 40px;">Start My Free Trial →</a>
+        <p style="color: #999; margin-top: 20px; font-size: 14px;">No credit card required • Cancel anytime</p>
+    </div>
+</body>
+</html>

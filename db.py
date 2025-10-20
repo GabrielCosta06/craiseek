@@ -5,7 +5,7 @@ import sqlite3
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Generator, Iterable, List, Optional
+from typing import Generator, Iterable, List, Optional, Any
 
 from config import get_settings
 
@@ -40,6 +40,24 @@ class Subscriber:
     email: Optional[str]
     whatsapp: Optional[str]
     created_at: Optional[str] = None
+    trial_ends_at: Optional[str] = None
+    subscription_credits: int = 0
+    referral_code: Optional[str] = None
+    referred_by: Optional[str] = None
+    successful_referrals: int = 0
+    whatsapp_unlocked: bool = False
+    last_digest_sent: Optional[str] = None
+
+
+@dataclass
+class Referral:
+    id: int
+    referrer_code: str
+    referee_email: str
+    referee_phone: Optional[str]
+    reward_granted: bool
+    created_at: Optional[str] = None
+    rewarded_at: Optional[str] = None
 
 
 SETTINGS = get_settings()
@@ -94,7 +112,25 @@ def init_db() -> None:
         tier TEXT NOT NULL DEFAULT 'FREE',
         email_verified INTEGER DEFAULT 0,
         verification_token TEXT,
+        trial_ends_at TIMESTAMP,
+        subscription_credits INTEGER DEFAULT 0,
+        referral_code TEXT UNIQUE,
+        referred_by TEXT,
+        successful_referrals INTEGER DEFAULT 0,
+        whatsapp_unlocked INTEGER DEFAULT 0,
+        last_digest_sent TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS referrals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        referrer_code TEXT NOT NULL,
+        referee_email TEXT NOT NULL,
+        referee_phone TEXT,
+        reward_granted INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        rewarded_at TIMESTAMP,
+        FOREIGN KEY (referrer_code) REFERENCES subscribers(referral_code)
     );
 
     CREATE TABLE IF NOT EXISTS users (
@@ -132,6 +168,20 @@ def _ensure_subscriber_schema(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE subscribers ADD COLUMN email_verified INTEGER DEFAULT 0;")
     if "verification_token" not in columns:
         conn.execute("ALTER TABLE subscribers ADD COLUMN verification_token TEXT;")
+    if "trial_ends_at" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN trial_ends_at TIMESTAMP;")
+    if "subscription_credits" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN subscription_credits INTEGER DEFAULT 0;")
+    if "referral_code" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN referral_code TEXT UNIQUE;")
+    if "referred_by" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN referred_by TEXT;")
+    if "successful_referrals" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN successful_referrals INTEGER DEFAULT 0;")
+    if "whatsapp_unlocked" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN whatsapp_unlocked INTEGER DEFAULT 0;")
+    if "last_digest_sent" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN last_digest_sent TIMESTAMP;")
 
     conn.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_subscribers_phone ON subscribers(phone) WHERE phone IS NOT NULL;"
@@ -537,7 +587,8 @@ def verify_email(token: str) -> bool:
 def get_subscriber_by_email(email: str) -> Optional[Subscriber]:
     """Fetch a subscriber by email."""
     query = """
-    SELECT id, phone, email, whatsapp, channel_preferences, tier, created_at
+    SELECT id, phone, email, whatsapp, channel_preferences, tier, created_at,
+           trial_ends_at, subscription_credits, referral_code, referred_by
     FROM subscribers
     WHERE email = ?;
     """
@@ -558,8 +609,334 @@ def get_subscriber_by_email(email: str) -> Optional[Subscriber]:
         email=row["email"],
         whatsapp=row["whatsapp"],
         created_at=row["created_at"],
+        trial_ends_at=row["trial_ends_at"],
+        subscription_credits=row["subscription_credits"] or 0,
+        referral_code=row["referral_code"],
+        referred_by=row["referred_by"],
     )
+
+
+def generate_referral_code(email: str) -> str:
+    """Generate a unique referral code for a user."""
+    import hashlib
+    import secrets
+    # Create a deterministic but unique code based on email + random salt
+    salt = secrets.token_hex(4)
+    base = f"{email}{salt}"
+    code = hashlib.sha256(base.encode()).hexdigest()[:8].upper()
+    return f"MS{code}"
+
+
+def set_referral_code(email: str) -> Optional[str]:
+    """Generate and set a referral code for a subscriber."""
+    max_attempts = 10
+    for _ in range(max_attempts):
+        code = generate_referral_code(email)
+        query = """
+        UPDATE subscribers
+        SET referral_code = ?
+        WHERE email = ? AND referral_code IS NULL;
+        """
+        with get_connection() as conn:
+            cursor = conn.execute(query, (code, email))
+            if cursor.rowcount > 0:
+                logger.info("Referral code generated", extra={"email": email, "code": code})
+                return code
+    return None
+
+
+def get_subscriber_by_referral_code(code: str) -> Optional[Subscriber]:
+    """Fetch a subscriber by their referral code."""
+    query = """
+    SELECT id, phone, email, whatsapp, channel_preferences, tier, created_at,
+           trial_ends_at, subscription_credits, referral_code, referred_by
+    FROM subscribers
+    WHERE referral_code = ?;
+    """
+    with get_connection() as conn:
+        row = conn.execute(query, (code,)).fetchone()
+    if not row:
+        return None
+    
+    channels = [channel.strip() for channel in (row["channel_preferences"] or "").split(",") if channel.strip()]
+    if not channels:
+        channels = ["email"]
+    
+    return Subscriber(
+        id=row["id"],
+        tier=row["tier"] or "FREE",
+        channel_preferences=channels,
+        phone=row["phone"],
+        email=row["email"],
+        whatsapp=row["whatsapp"],
+        created_at=row["created_at"],
+        trial_ends_at=row["trial_ends_at"],
+        subscription_credits=row["subscription_credits"] or 0,
+        referral_code=row["referral_code"],
+        referred_by=row["referred_by"],
+    )
+
+
+def record_referral(referrer_code: str, referee_email: str, referee_phone: Optional[str] = None) -> bool:
+    """Record a referral when someone signs up using a referral code."""
+    query = """
+    INSERT INTO referrals (referrer_code, referee_email, referee_phone)
+    VALUES (?, ?, ?);
+    """
+    with get_connection() as conn:
+        try:
+            conn.execute(query, (referrer_code, referee_email, referee_phone))
+            logger.info("Referral recorded", extra={"referrer_code": referrer_code, "referee": referee_email})
+            return True
+        except sqlite3.IntegrityError:
+            logger.warning("Duplicate referral attempt", extra={"referrer_code": referrer_code, "referee": referee_email})
+            return False
+
+
+def grant_referral_reward(referral_id: int) -> bool:
+    """
+    Grant 1 month Elite tier to BOTH the referrer and referee for a successful referral.
+    Also increments successful_referrals counter and potentially unlocks WhatsApp.
+    """
+    # First, mark the referral as rewarded
+    update_referral = """
+    UPDATE referrals
+    SET reward_granted = 1, rewarded_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND reward_granted = 0;
+    """
+    
+    # Get the referrer code and referee email
+    get_referral_info = """
+    SELECT referrer_code, referee_email FROM referrals WHERE id = ?;
+    """
+    
+    # Add 1 Elite credit (1 month Elite tier) to the referrer
+    add_credit_referrer = """
+    UPDATE subscribers
+    SET subscription_credits = subscription_credits + 1
+    WHERE referral_code = ?;
+    """
+    
+    # Add 1 Elite credit to the referee (new subscriber)
+    add_credit_referee = """
+    UPDATE subscribers
+    SET subscription_credits = subscription_credits + 1
+    WHERE email = ?;
+    """
+    
+    with get_connection() as conn:
+        cursor = conn.execute(update_referral, (referral_id,))
+        if cursor.rowcount == 0:
+            return False
+        
+        row = conn.execute(get_referral_info, (referral_id,)).fetchone()
+        if not row:
+            return False
+        
+        referrer_code = row["referrer_code"]
+        referee_email = row["referee_email"]
+        
+        # Grant Elite credit to referrer
+        conn.execute(add_credit_referrer, (referrer_code,))
+        
+        # Grant Elite credit to referee
+        conn.execute(add_credit_referee, (referee_email,))
+        
+        # Increment successful referrals (this also unlocks WhatsApp at 3)
+        increment_successful_referrals(referrer_code)
+        
+        logger.info("Referral reward granted to BOTH parties", extra={
+            "referral_id": referral_id,
+            "referrer_code": referrer_code,
+            "referee_email": referee_email
+        })
+        return True
+
+
+def get_pending_referrals(referrer_code: str) -> List[Referral]:
+    """Get all referrals that haven't been rewarded yet for a given referrer."""
+    query = """
+    SELECT id, referrer_code, referee_email, referee_phone, reward_granted, created_at, rewarded_at
+    FROM referrals
+    WHERE referrer_code = ? AND reward_granted = 0;
+    """
+    with get_connection() as conn:
+        rows = conn.execute(query, (referrer_code,)).fetchall()
+    
+    return [
+        Referral(
+            id=row["id"],
+            referrer_code=row["referrer_code"],
+            referee_email=row["referee_email"],
+            referee_phone=row["referee_phone"],
+            reward_granted=bool(row["reward_granted"]),
+            created_at=row["created_at"],
+            rewarded_at=row["rewarded_at"],
+        )
+        for row in rows
+    ]
+
+
+def get_all_referrals(referrer_code: str) -> List[Referral]:
+    """Get all referrals (both pending and rewarded) for a given referrer."""
+    query = """
+    SELECT id, referrer_code, referee_email, referee_phone, reward_granted, created_at, rewarded_at
+    FROM referrals
+    WHERE referrer_code = ?
+    ORDER BY created_at DESC;
+    """
+    with get_connection() as conn:
+        rows = conn.execute(query, (referrer_code,)).fetchall()
+    
+    return [
+        Referral(
+            id=row["id"],
+            referrer_code=row["referrer_code"],
+            referee_email=row["referee_email"],
+            referee_phone=row["referee_phone"],
+            reward_granted=bool(row["reward_granted"]),
+            created_at=row["created_at"],
+            rewarded_at=row["rewarded_at"],
+        )
+        for row in rows
+    ]
+
+
+def use_subscription_credit(email: str) -> bool:
+    """Use one subscription credit (1 month free) for a subscriber."""
+    query = """
+    UPDATE subscribers
+    SET subscription_credits = subscription_credits - 1
+    WHERE email = ? AND subscription_credits > 0;
+    """
+    with get_connection() as conn:
+        cursor = conn.execute(query, (email,))
+        if cursor.rowcount > 0:
+            logger.info("Subscription credit used", extra={"email": email})
+            return True
+    return False
+
+
+def get_free_users_for_digest() -> List[Subscriber]:
+    """Get all free tier users who should receive weekly digest (7+ days since last digest)."""
+    query = """
+    SELECT * FROM subscribers
+    WHERE tier = 'FREE'
+    AND email IS NOT NULL
+    AND (last_digest_sent IS NULL OR last_digest_sent < datetime('now', '-7 days'));
+    """
+    with get_connection() as conn:
+        rows = conn.execute(query).fetchall()
+    
+    return [
+        Subscriber(
+            id=row["id"],
+            tier=row["tier"],
+            channel_preferences=row["channel_preferences"].split(",") if row["channel_preferences"] else ["sms"],
+            phone=row["phone"],
+            email=row["email"],
+            whatsapp=row["whatsapp"],
+            created_at=row["created_at"],
+            trial_ends_at=row["trial_ends_at"],
+            subscription_credits=row.get("subscription_credits", 0),
+            referral_code=row.get("referral_code"),
+            referred_by=row.get("referred_by"),
+            successful_referrals=row.get("successful_referrals", 0),
+            whatsapp_unlocked=bool(row.get("whatsapp_unlocked", 0)),
+            last_digest_sent=row.get("last_digest_sent"),
+        )
+        for row in rows
+    ]
+
+
+def update_digest_sent(subscriber_id: int) -> None:
+    """Mark that a digest email was sent to this subscriber."""
+    query = """
+    UPDATE subscribers
+    SET last_digest_sent = CURRENT_TIMESTAMP
+    WHERE id = ?;
+    """
+    with get_connection() as conn:
+        conn.execute(query, (subscriber_id,))
+        logger.info("Digest timestamp updated", extra={"subscriber_id": subscriber_id})
+
+
+def increment_successful_referrals(referral_code: str) -> int:
+    """Increment successful referrals count and return new count. Unlocks WhatsApp at 3."""
+    update_count = """
+    UPDATE subscribers
+    SET successful_referrals = successful_referrals + 1
+    WHERE referral_code = ?;
+    """
+    
+    get_count = """
+    SELECT successful_referrals FROM subscribers WHERE referral_code = ?;
+    """
+    
+    unlock_whatsapp = """
+    UPDATE subscribers
+    SET whatsapp_unlocked = 1
+    WHERE referral_code = ? AND successful_referrals >= 3;
+    """
+    
+    with get_connection() as conn:
+        conn.execute(update_count, (referral_code,))
+        row = conn.execute(get_count, (referral_code,)).fetchone()
+        count = row["successful_referrals"] if row else 0
+        
+        if count >= 3:
+            conn.execute(unlock_whatsapp, (referral_code,))
+            logger.info("WhatsApp unlocked", extra={"referral_code": referral_code, "count": count})
+        
+        return count
+
+
+def get_listings_from_past_week(keywords: str, max_price: int | None = None, min_bedrooms: int | None = None, limit: int = 10) -> List[Listing]:
+    """Get recent listings from the past 7 days matching criteria."""
+    conditions = ["first_seen > datetime('now', '-7 days')"]
+    params: List[Any] = []
+    
+    # Split keywords and create LIKE conditions
+    if keywords:
+        keyword_list = [k.strip().lower() for k in keywords.split(",")]
+        keyword_conditions = " OR ".join(["LOWER(title) LIKE ?" for _ in keyword_list])
+        conditions.append(f"({keyword_conditions})")
+        params.extend([f"%{k}%" for k in keyword_list])
+    
+    if max_price is not None:
+        conditions.append("price <= ?")
+        params.append(max_price)
+    
+    if min_bedrooms is not None:
+        conditions.append("bedrooms >= ?")
+        params.append(min_bedrooms)
+    
+    where_clause = " AND ".join(conditions)
+    query = f"""
+    SELECT * FROM listings
+    WHERE {where_clause}
+    ORDER BY first_seen DESC
+    LIMIT ?;
+    """
+    params.append(limit)
+    
+    with get_connection() as conn:
+        rows = conn.execute(query, params).fetchall()
+    
+    return [
+        Listing(
+            id=row["id"],
+            title=row["title"],
+            url=row["url"],
+            price=row["price"],
+            bedrooms=row.get("bedrooms"),
+            location=row.get("location"),
+            first_seen=row["first_seen"],
+        )
+        for row in rows
+    ]
 
 
 # Ensure the database schema exists on import.
 init_db()
+

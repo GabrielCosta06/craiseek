@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program · Marketseek</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .brand span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        nav {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .hero {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .hero .emoji {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .reward-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .code-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .code-section h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .referral-code {
+            background: #f7f7f7;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .code-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .share-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .share-link {
+            display: block;
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .share-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .referrals-list {
+            margin-top: 30px;
+        }
+        
+        .referrals-list h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .referral-item {
+            background: #f7f7f7;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .referral-email {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .referral-date {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .referral-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-rewarded {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 24px;
+            }
+            
+            .code-value {
+                font-size: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="brand"><span>M</span> Marketseek</a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/settings">Settings</a>
+                <form action="/logout" method="post" style="display: inline;">
+                    <button type="submit" style="background: none; border: none; color: #667eea; cursor: pointer; font-weight: 500; font-size: 16px;">Logout</button>
+                </form>
+            </nav>
+        </div>
+
+        <div class="hero">
+            <div class="emoji">🎁</div>
+            <h1>Refer Friends, You Both Get Elite!</h1>
+            <p>Share Marketseek with your friends and you BOTH get 1 month of Elite tier when they subscribe to any paid plan.</p>
+            <div class="reward-box">
+                🏆 1 Friend = Both Get 1 Month Elite FREE! 🏆
+            </div>
+        </div>
+
+        {% if subscription and subscription.referral_code %}
+        <div class="code-section">
+            <h2>Your Unique Referral Code</h2>
+            <div class="referral-code">
+                <div class="code-value" id="referralCode">{{ subscription.referral_code }}</div>
+                <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
+            </div>
+            
+            <div class="share-links">
+                <a href="https://twitter.com/intent/tweet?text=I%27m%20using%20Marketseek%20to%20find%20amazing%20rental%20deals%20on%20Facebook%20Marketplace!%20Sign%20up%20with%20my%20code%20{{ subscription.referral_code }}%20and%20we%20BOTH%20get%201%20month%20Elite%20FREE!%20{{ base_url }}/subscribe?ref={{ subscription.referral_code }}" target="_blank" class="share-link">
+                    🐦 Share on Twitter
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ base_url }}/subscribe?ref={{ subscription.referral_code }}" target="_blank" class="share-link">
+                    📘 Share on Facebook
+                </a>
+                <a href="mailto:?subject=We%20both%20get%201%20month%20Elite%20FREE%20on%20Marketseek!&body=Hey!%20I%27m%20using%20Marketseek%20to%20find%20great%20rental%20deals%20on%20Facebook%20Marketplace.%20Use%20my%20code%20{{ subscription.referral_code }}%20when%20you%20sign%20up%20and%20we%20BOTH%20get%201%20month%20of%20Elite%20tier%20FREE!%20{{ base_url }}/subscribe?ref={{ subscription.referral_code }}" class="share-link">
+                    ✉️ Share via Email
+                </a>
+                <a href="#" onclick="shareWhatsApp(); return false;" class="share-link">
+                    💬 Share on WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2>Your Referral Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ rewarded_count }}</div>
+                    <div class="stat-label">Free Months Earned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_count }}</div>
+                    <div class="stat-label">Pending Referrals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ subscription.subscription_credits or 0 }}</div>
+                    <div class="stat-label">Available Credits</div>
+                </div>
+            </div>
+
+            {% if referrals %}
+            <div class="referrals-list">
+                <h3>Recent Referrals</h3>
+                {% for referral in referrals %}
+                <div class="referral-item">
+                    <div>
+                        <div class="referral-email">{{ referral.referee_email[:3] }}***@***</div>
+                        <div class="referral-date">Joined {{ referral.created_at[:10] }}</div>
+                    </div>
+                    <span class="referral-status {% if referral.reward_granted %}status-rewarded{% else %}status-pending{% endif %}">
+                        {% if referral.reward_granted %}✅ Rewarded{% else %}⏳ Pending{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <p>No referrals yet. Share your code to get started!</p>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="stats-section">
+            <div class="empty-state">
+                <div class="empty-state-icon">🔒</div>
+                <p>Subscribe to any plan to get your referral code!</p>
+                <a href="/subscribe" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">View Plans</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = document.getElementById('referralCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#4caf50';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            });
+        }
+
+        function shareWhatsApp() {
+            const code = '{{ subscription.referral_code if subscription else "" }}';
+            const url = '{{ base_url }}/subscribe?ref=' + code;
+            const text = encodeURIComponent(`I'm using Marketseek to find amazing rental deals on Facebook Marketplace! Use my code ${code} and we BOTH get 1 month Elite FREE! ${url}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+    </script>
+</body>
+</html>

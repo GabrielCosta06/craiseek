@@ -1,4 +1,4 @@
-"""FastAPI web application for Craiseek rental alert service."""
+"""FastAPI web application for Marketseek rental alert service."""
 from __future__ import annotations
 
 import logging
@@ -30,6 +30,16 @@ from db import (
     set_verification_token,
     verify_email,
     get_subscriber_by_email,
+    set_referral_code,
+    get_subscriber_by_referral_code,
+    record_referral,
+    grant_referral_reward,
+    get_all_referrals,
+    get_pending_referrals,
+    get_free_users_for_digest,
+    update_digest_sent,
+    get_listings_from_past_week,
+    increment_successful_referrals,
 )
 
 logger = logging.getLogger(__name__)
@@ -56,7 +66,7 @@ PLAN_DETAILS = [
         "features": [
             "Daily email digest of top 3 listings",
             "Real-time dashboard with saved search filters",
-            "Track up to 3 favorite neighborhoods",
+            "Track up to 3 favorite locations",
         ],
         "action": "Start for free",
     },
@@ -64,16 +74,17 @@ PLAN_DETAILS = [
         "id": "essential",
         "name": "Essential",
         "price": "$3.90",
-        "badge": "Most Popular",
+        "badge": "🎁 3-Day Free Trial",
         "frequency": "/month",
         "tagline": "Pick SMS, WhatsApp or email — instant alerts, zero delays.",
         "features": [
+            "🎉 3-day free trial, cancel anytime",
             "Instant alerts via your choice of SMS, WhatsApp or email",
-            "Unlimited neighborhood tracking",
+            "Unlimited location tracking",
             "Direct link payloads so you can respond faster",
             "Priority support in under 6 hours",
         ],
-        "action": "Activate Essential",
+        "action": "Start Free Trial",
     },
     {
         "id": "elite",
@@ -84,8 +95,8 @@ PLAN_DETAILS = [
         "tagline": "All channels unlocked: SMS, WhatsApp, and email together.",
         "features": [
             "Simultaneous SMS + WhatsApp + email alerts",
-            "One-minute crawl loop with VIP queueing",
-            "Instant neighborhood heatmaps & comps",
+            "Five-minute crawl loop with VIP queueing",
+            "Instant location heatmaps & comps",
             "Concierge support with human escalation",
         ],
         "action": "Unlock Elite",
@@ -219,6 +230,7 @@ async def create_checkout_session(request: Request) -> JSONResponse:
     form = await _parse_form_data(request)
     plan = (form.get("plan") or "essential").lower()
     channel_choice = (form.get("channel") or "sms").lower()
+    referral_code = form.get("referral_code", "").strip()
 
     plan_config: Dict[str, Dict[str, object]] = {
         "essential": {
@@ -246,6 +258,11 @@ async def create_checkout_session(request: Request) -> JSONResponse:
     success_url = str(request.url_for("landing")) + "?success=true"
     cancel_url = str(request.url_for("landing")) + "?canceled=true"
 
+    # Add 3-day free trial for Essential plan
+    trial_config = {}
+    if plan == "essential":
+        trial_config = {"subscription_data": {"trial_period_days": 3}}
+    
     try:
         session = stripe.checkout.Session.create(
             mode="subscription",
@@ -258,7 +275,9 @@ async def create_checkout_session(request: Request) -> JSONResponse:
                 "tier": plan.upper(),
                 "channels": channels_str,
                 "requested_channel": channel_choice,
+                "referral_code": referral_code if referral_code else "",
             },
+            **trial_config,
         )
     except stripe.error.StripeError as exc:
         logger.error("Stripe error creating Checkout session", extra={"error": str(exc)})
@@ -296,12 +315,13 @@ async def stripe_webhook(request: Request) -> JSONResponse:
         tier = (metadata.get("tier") or "ESSENTIAL").upper()
         channels_raw = metadata.get("channels") or "sms"
         channels = [c.strip() for c in channels_raw.split(",") if c.strip()]
+        referral_code = metadata.get("referral_code", "").strip()
         whatsapp_contact = None
         if "whatsapp" in channels and phone:
             whatsapp_contact = phone if phone.startswith("whatsapp:") else f"whatsapp:{phone}"
 
-        if not phone:
-            logger.warning("Checkout session missing phone number", extra={"session_id": session.get("id")})
+        if not phone and not email:
+            logger.warning("Checkout session missing contact info", extra={"session_id": session.get("id")})
         else:
             inserted = upsert_subscriber(
                 tier=tier,
@@ -310,6 +330,28 @@ async def stripe_webhook(request: Request) -> JSONResponse:
                 email=email if "email" in channels else None,
                 whatsapp=whatsapp_contact,
             )
+            
+            # Generate referral code for new subscriber
+            if email and inserted:
+                set_referral_code(email)
+            
+            # Process referral if code was provided
+            if referral_code and email:
+                referrer = get_subscriber_by_referral_code(referral_code)
+                if referrer:
+                    # Record the referral
+                    record_referral(referral_code, email, phone)
+                    # Find pending referrals for this referee
+                    pending = get_pending_referrals(referral_code)
+                    for ref in pending:
+                        if ref.referee_email == email:
+                            # Grant reward (1 month free) to referrer
+                            grant_referral_reward(ref.id)
+                            logger.info("Referral reward processed", extra={
+                                "referrer_code": referral_code,
+                                "referee": email
+                            })
+            
             logger.info(
                 "Processed subscriber from Stripe",
                 extra={
@@ -553,3 +595,100 @@ async def settings_page(request: Request) -> HTMLResponse:
 async def faq_page(request: Request) -> HTMLResponse:
     """Render the FAQ page."""
     return templates.TemplateResponse("faq.html", {"request": request, "user": _current_user(request)})
+
+
+@app.get("/referrals", response_class=HTMLResponse)
+async def referrals_page(request: Request) -> HTMLResponse:
+    """Show referral dashboard with code and tracking."""
+    user = _current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    
+    # Get or create subscriber record for this user
+    subscription = get_subscriber_by_email(user.email)
+    
+    # Generate referral code if they don't have one
+    if subscription and not subscription.referral_code:
+        set_referral_code(user.email)
+        subscription = get_subscriber_by_email(user.email)
+    
+    # Get referral stats
+    referrals = []
+    rewarded_count = 0
+    pending_count = 0
+    
+    if subscription and subscription.referral_code:
+        referrals = get_all_referrals(subscription.referral_code)
+        rewarded_count = sum(1 for r in referrals if r.reward_granted)
+        pending_count = sum(1 for r in referrals if not r.reward_granted)
+    
+    context = {
+        "request": request,
+        "user": user,
+        "subscription": subscription,
+        "referrals": referrals,
+        "rewarded_count": rewarded_count,
+        "pending_count": pending_count,
+        "base_url": str(request.base_url).rstrip("/"),
+    }
+    return templates.TemplateResponse("referrals.html", context)
+
+
+@app.get("/promo", response_class=HTMLResponse)
+async def promo_page(request: Request) -> HTMLResponse:
+    """Show promotional page for free trial and referral program."""
+    return templates.TemplateResponse("promo.html", {"request": request, "user": _current_user(request)})
+
+
+@app.post("/admin/send-digests")
+async def send_weekly_digests(request: Request) -> JSONResponse:
+    """Send weekly digest emails to all eligible free users. Admin endpoint."""
+    from alerts import EmailService
+    
+    # Simple admin protection (you should implement proper auth)
+    admin_key = request.headers.get("X-Admin-Key")
+    if admin_key != settings.admin_api_key:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    
+    email_service = EmailService(settings)
+    free_users = get_free_users_for_digest()
+    sent_count = 0
+    error_count = 0
+    
+    base_url = str(request.base_url).rstrip("/")
+    
+    for user in free_users:
+        try:
+            # Get listings from past week matching user's criteria
+            # Extract keywords from user's search (this is simplified - you may need to store keywords)
+            listings = get_listings_from_past_week(
+                keywords="",  # You'd need to store user's search keywords
+                max_price=None,
+                min_bedrooms=None,
+                limit=10
+            )
+            
+            # Send digest
+            email_service.send_digest_email(
+                to_email=user.email,
+                referral_code=user.referral_code or "",
+                listings=listings,
+                base_url=base_url
+            )
+            
+            # Mark as sent
+            update_digest_sent(user.id)
+            sent_count += 1
+            logger.info(f"Digest sent to {user.email}")
+            
+        except Exception as exc:
+            error_count += 1
+            logger.error(f"Failed to send digest to {user.email}: {exc}")
+    
+    return JSONResponse({
+        "status": "completed",
+        "sent": sent_count,
+        "errors": error_count,
+        "total_eligible": len(free_users)
+    })
+

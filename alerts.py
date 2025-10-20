@@ -276,7 +276,18 @@ class EmailService:
         msg["Subject"] = subject
         msg["From"] = self.settings.email_from_address
         msg["To"] = to_email
-        msg.set_content(f"{body}\n\nSent via Craiseek rental radar.")
+        
+        # Enhanced branding footer
+        footer = f"""
+
+---
+🏠 Powered by Marketseek - Never Miss Your Perfect Rental
+Found your dream apartment? Help friends find theirs! 
+Share Marketseek: https://marketseek.com/promo
+
+Join 10,000+ renters who found apartments faster
+"""
+        msg.set_content(f"{body}{footer}")
         return msg
 
     def _connect(self) -> smtplib.SMTP:
@@ -298,4 +309,55 @@ class EmailService:
         return smtp
 
 
+    def send_digest_email(self, to_email: str, referral_code: str, listings: Sequence[Listing], base_url: str = "https://marketseek.com") -> None:
+        """Send weekly digest email with listings and referral info."""
+        if not self.settings.email_from_address:
+            raise RuntimeError("EMAIL_FROM_ADDRESS must be configured for digest emails.")
+        
+        from datetime import datetime
+        from pathlib import Path
+        try:
+            from jinja2 import Environment, FileSystemLoader
+        except ImportError:
+            raise RuntimeError("Jinja2 is required for digest emails. Install with `pip install jinja2`.")
+        
+        # Load template
+        template_dir = Path(__file__).parent / "templates"
+        env = Environment(loader=FileSystemLoader(str(template_dir)))
+        template = env.get_template("digest_email.html")
+        
+        # Prepare listing data
+        listing_data = []
+        for listing in listings:
+            listing_data.append({
+                "title": listing.title,
+                "price": listing.price,
+                "bedrooms": listing.bedrooms,
+                "location": listing.location,
+                "url": listing.url,
+                "first_seen": listing.first_seen,
+            })
+        
+        # Render HTML
+        html_content = template.render(
+            listings=listing_data,
+            referral_code=referral_code,
+            base_url=base_url,
+            date=datetime.now().strftime("%B %d, %Y"),
+        )
+        
+        # Create message
+        msg = EmailMessage()
+        msg["Subject"] = f"🏠 Your Weekly Marketseek Digest - {len(listings)} New Listings"
+        msg["From"] = self.settings.email_from_address
+        msg["To"] = to_email
+        msg.set_content("Please view this email in an HTML-capable email client.")
+        msg.add_alternative(html_content, subtype="html")
+        
+        # Send
+        with self._connect() as smtp:
+            smtp.send_message(msg)
+
+
 __all__ = ["AlertService", "_format_message", "EmailService"]
+

@@ -26,48 +26,79 @@ def configure_logging() -> None:
 
 
 def parse_listings(html: str, base_url: str) -> List[Listing]:
-    """Parse Craigslist HTML into Listing objects."""
+    """Parse Facebook Marketplace HTML into Listing objects."""
     soup = BeautifulSoup(html, "lxml")
     listings: List[Listing] = []
     seen: set[str] = set()
 
-    for item in soup.select("[data-pid]"):
-        post_id = item.get("data-pid")
-        if not post_id:
+    # Facebook Marketplace uses dynamic rendering, so parsing raw HTML is limited
+    # This is a basic implementation that looks for common patterns
+    # For production, consider using Facebook's Graph API or Selenium for dynamic content
+    
+    # Look for marketplace listing containers (these selectors may need adjustment)
+    # Facebook's class names are often minified/obfuscated
+    for item in soup.find_all(["div", "a"], attrs={"href": lambda x: x and "/marketplace/item/" in str(x)}):
+        # Extract listing ID from URL
+        href = item.get("href", "")
+        if "/marketplace/item/" not in href:
             continue
-        if post_id in seen:
+            
+        # Extract post ID from marketplace URL
+        post_id_match = href.split("/marketplace/item/")[-1].split("/")[0].split("?")[0]
+        if not post_id_match or post_id_match in seen:
             continue
+        post_id = post_id_match
         seen.add(post_id)
 
-        title_element = item.select_one(".result-title")
-        anchor = title_element or item.find("a")
-        title = anchor.get_text(strip=True) if anchor else ""
+        # Try to extract title - look for text in the link or nearby elements
+        title = item.get_text(strip=True) if item.get_text(strip=True) else None
+        if not title:
+            # Try to find title in child elements
+            title_candidates = item.find_all(["span", "div"], recursive=True)
+            for candidate in title_candidates:
+                text = candidate.get_text(strip=True)
+                if text and len(text) > 5 and len(text) < 200:
+                    title = text
+                    break
+        
+        # Look for price - Facebook typically shows prices with $ symbol
+        price = None
+        price_text = item.get_text()
+        if "$" in price_text:
+            # Extract price pattern
+            import re
+            price_match = re.search(r'\$[\d,]+(?:\.\d{2})?', price_text)
+            if price_match:
+                price = price_match.group()
 
-        price_element = item.select_one(".result-price")
-        price = price_element.get_text(strip=True) if price_element else None
+        # Facebook Marketplace locations are typically shown but harder to parse
+        # May need to be extracted from structured data or API
+        neighborhood = None
 
-        hood_element = item.select_one(".result-hood")
-        neighborhood = hood_element.get_text(strip=True) if hood_element else None
-        if neighborhood:
-            neighborhood = neighborhood.strip(" ()")
-
-        href = anchor["href"] if anchor and anchor.has_attr("href") else None
-        if not href:
-            logger.warning("Listing missing URL", extra={"post_id": post_id})
-        url = urljoin(base_url, href) if href else base_url
+        # Build full URL
+        url = urljoin(base_url, href) if not href.startswith("http") else href
+        # Clean up URL parameters
+        url = url.split("?")[0]
 
         if not title:
             logger.warning("Listing missing title", extra={"post_id": post_id})
-            title = "Craigslist Listing"
+            title = "Facebook Marketplace Listing"
 
         listings.append(
             Listing(
                 post_id=post_id,
                 title=title,
                 price=price,
-                neighborhood=neighborhood if neighborhood else None,
+                neighborhood=neighborhood,
                 url=url,
             )
+        )
+
+    # If no listings found with the above method, log a warning
+    if not listings:
+        logger.warning(
+            "No Facebook Marketplace listings parsed. "
+            "Facebook uses dynamic rendering - consider using Selenium or the Graph API for better results."
         )
 
     return listings
@@ -145,7 +176,7 @@ def run_once(alert_service: AlertService) -> None:
 
 def main(argv: Optional[List[str]] = None) -> None:
     configure_logging()
-    parser = argparse.ArgumentParser(description="Craigslist rental scraper.")
+    parser = argparse.ArgumentParser(description="Facebook Marketplace rental scraper.")
     parser.add_argument(
         "command",
         nargs="?",

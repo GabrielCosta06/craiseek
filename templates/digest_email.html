@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Weekly Marketseek Digest</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+        .listing {
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            transition: transform 0.2s;
+        }
+        .listing:hover {
+            transform: translateX(5px);
+        }
+        .listing-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin: 0 0 8px 0;
+        }
+        .listing-price {
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .listing-details {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .listing-link {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .listing-link:hover {
+            background: #45a049;
+        }
+        .cta-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cta-box h2 {
+            margin: 0 0 15px 0;
+            font-size: 22px;
+        }
+        .cta-box p {
+            margin: 0 0 20px 0;
+            font-size: 15px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .cta-button:hover {
+            background: #f0f0f0;
+        }
+        .referral-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .referral-box h3 {
+            color: #856404;
+            margin: 0 0 10px 0;
+        }
+        .referral-box p {
+            color: #856404;
+            margin: 0 0 15px 0;
+        }
+        .referral-code {
+            background: white;
+            border: 2px dashed #ffc107;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #856404;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .share-buttons {
+            margin-top: 15px;
+        }
+        .share-button {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: #ffc107;
+            color: #856404;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .share-button:hover {
+            background: #e0a800;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 12px;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .social-proof {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin: 15px 0;
+        }
+        .no-listings {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        .no-listings p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Your Weekly Digest</h1>
+            <p>Fresh listings from Facebook Marketplace • {{ date }}</p>
+        </div>
+
+        {% if listings %}
+            <p style="color: #666; margin-bottom: 20px;">
+                Here are the <strong>{{ listings|length }}</strong> best listings we found for you this week:
+            </p>
+
+            {% for listing in listings %}
+            <div class="listing">
+                <div class="listing-title">{{ listing.title }}</div>
+                <div class="listing-price">${{ listing.price }}</div>
+                {% if listing.bedrooms %}
+                <div class="listing-details">🛏️ {{ listing.bedrooms }} bedroom{{ 's' if listing.bedrooms > 1 else '' }}</div>
+                {% endif %}
+                {% if listing.location %}
+                <div class="listing-details">📍 {{ listing.location }}</div>
+                {% endif %}
+                <div class="listing-details">📅 Posted {{ listing.first_seen }}</div>
+                <a href="{{ listing.url }}" class="listing-link" target="_blank">View Listing →</a>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <div class="no-listings">
+                <p>😔 No new listings matched your criteria this week.</p>
+                <p>Try adjusting your search filters or check back next week!</p>
+            </div>
+        {% endif %}
+
+        <div class="cta-box">
+            <h2>⚡ Want Instant Alerts?</h2>
+            <p>Don't wait a week! Upgrade to Essential or Elite and get real-time SMS/WhatsApp alerts the moment new listings appear.</p>
+            <a href="{{ base_url }}/subscribe" class="cta-button">Upgrade Now →</a>
+        </div>
+
+        {% if referral_code %}
+        <div class="referral-box">
+            <h3>🎁 Share & Get 1 Month Elite FREE!</h3>
+            <p>Invite friends and you BOTH get 1 month of Elite tier when they subscribe!</p>
+            <div class="referral-code">{{ referral_code }}</div>
+            <div class="share-buttons">
+                <a href="https://twitter.com/intent/tweet?text=I%27m%20using%20Marketseek%20to%20find%20amazing%20rental%20deals%20on%20Facebook%20Marketplace!%20Sign%20up%20with%20my%20code%20{{ referral_code }}%20and%20we%20both%20get%201%20month%20Elite%20FREE!%20{{ base_url }}" class="share-button" target="_blank">Share on Twitter</a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ base_url }}" class="share-button" target="_blank">Share on Facebook</a>
+                <a href="https://api.whatsapp.com/send?text=Check%20out%20Marketseek!%20Use%20my%20code%20{{ referral_code }}%20and%20we%20both%20get%201%20month%20Elite%20FREE!%20{{ base_url }}" class="share-button" target="_blank">Share on WhatsApp</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="social-proof">
+            Join 10,000+ renters finding their perfect home with Marketseek
+        </div>
+
+        <div class="footer">
+            <p><strong>Powered by Marketseek</strong></p>
+            <p>Never miss a listing again • Smart alerts • Best deals first</p>
+            <p>
+                <a href="{{ base_url }}/settings">Manage Preferences</a> •
+                <a href="{{ base_url }}/unsubscribe">Unsubscribe</a>
+            </p>
+            <p style="margin-top: 15px; color: #999;">
+                This is an automated weekly digest. You're receiving this because you're on our FREE tier.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
