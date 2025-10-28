@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Resellers & Flippers · Marketseek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links a {
+            margin-left: 24px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+            color: white;
+            padding: 80px 24px;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            opacity: 0.95;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .cta-primary {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 18px 48px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+        }
+        
+        .section {
+            padding: 80px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+        }
+        
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+        
+        .roi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .roi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .roi-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .roi-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+        
+        .roi-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 16px 0;
+        }
+        
+        .roi-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        
+        .roi-card ul {
+            margin-top: 16px;
+            padding-left: 0;
+            list-style: none;
+        }
+        
+        .roi-card li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+        }
+        
+        .roi-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+        
+        .testimonial-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 80px 24px;
+        }
+        
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonial {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .testimonial-info {
+            flex: 1;
+        }
+        
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .testimonial-role {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .stats-section {
+            background: var(--text);
+            color: white;
+            padding: 80px 24px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 48px;
+            max-width: 1000px;
+            margin: 48px auto 0;
+        }
+        
+        .stat {
+            padding: 24px;
+        }
+        
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .pricing-section {
+            padding: 80px 24px;
+            background: white;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 48px auto 0;
+        }
+        
+        .pricing-card {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 40px 32px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .pricing-card.popular {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .pricing-freq {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: 12px 0;
+            padding-left: 32px;
+            position: relative;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .pricing-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .pricing-cta {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .pricing-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 48px 24px;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="brand">💎 Marketseek</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/subscribe">Pricing</a>
+                <a href="/referrals">Referrals</a>
+                <a href="/login">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>🚀 Built for Resellers & Flippers</h1>
+            <p class="subtitle">Get instant alerts on Facebook Marketplace deals before your competition</p>
+            <p>Stop losing money by being second to contact sellers. Marketseek gives you the unfair advantage of instant notifications for hot deals, so you can flip faster and profit more.</p>
+            <a href="/subscribe" class="cta-primary">Start 3-Day Free Trial →</a>
+        </div>
+    </div>
+
+    <!-- ROI Section -->
+    <div class="section">
+        <h2 class="section-title">Why Resellers Love Marketseek</h2>
+        <p class="section-subtitle">Real numbers from real flippers who use Marketseek daily</p>
+        
+        <div class="roi-grid">
+            <div class="roi-card">
+                <div class="roi-icon">⚡</div>
+                <h3>Be First to Respond</h3>
+                <div class="roi-amount">80%</div>
+                <p><strong>faster response time</strong> compared to manual checking. Most profitable deals are gone within 10 minutes of posting.</p>
+                <ul>
+                    <li>Instant SMS/WhatsApp alerts</li>
+                    <li>Direct links in notifications</li>
+                    <li>24/7 automated monitoring</li>
+                    <li>Never miss a hot deal again</li>
+                </ul>
+            </div>
+            
+            <div class="roi-card">
+                <div class="roi-icon">💰</div>
+                <h3>Clear ROI</h3>
+                <div class="roi-amount">$2,400</div>
+                <p><strong>average monthly profit increase</strong> reported by active resellers. Just one good deal can pay for years of Marketseek.</p>
+                <ul>
+                    <li>$3.90/month investment</li>
+                    <li>Average flip profit: $50-500</li>
+                    <li>ROI: 1,000%+ potential</li>
+                    <li>Pays for itself with 1 deal</li>
+                </ul>
+            </div>
+            
+            <div class="roi-card">
+                <div class="roi-icon">🎯</div>
+                <h3>Smart Targeting</h3>
+                <div class="roi-amount">3x</div>
+                <p><strong>more quality leads</strong> with custom price, location, and keyword filters. Only get alerts for deals you actually want.</p>
+                <ul>
+                    <li>Set max price thresholds</li>
+                    <li>Filter by multiple locations</li>
+                    <li>Keyword-based searches</li>
+                    <li>Avoid wasting time on junk</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="testimonial-section">
+        <div class="section">
+            <h2 class="section-title">Success Stories from Flippers</h2>
+            <p class="section-subtitle">Join hundreds of resellers already crushing it with Marketseek</p>
+            
+            <div class="testimonials">
+                <div class="testimonial">
+                    <p class="testimonial-text">"I made $847 in my first week just from one furniture flip I found through Marketseek. This tool is insane. I was first to message the seller within 2 minutes of posting."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MR</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Marcus R.</div>
+                            <div class="testimonial-role">Furniture Flipper, Chicago</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial">
+                    <p class="testimonial-text">"As someone who flips electronics, timing is everything. Marketseek's instant WhatsApp alerts mean I can respond while I'm out sourcing. Game changer for my business."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SC</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Sarah C.</div>
+                            <div class="testimonial-role">Electronics Reseller, Austin</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial">
+                    <p class="testimonial-text">"I was skeptical at first, but after landing 3 deals in my first month that netted me $1,200 profit combined, I upgraded to lifetime. Best business investment I've made."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JT</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">James T.</div>
+                            <div class="testimonial-role">Full-Time Flipper, Miami</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-section">
+        <h2 class="section-title">The Numbers Don't Lie</h2>
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-number">2.3x</div>
+                <div class="stat-label">More Deals Closed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">87%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">5min</div>
+                <div class="stat-label">Avg Response Time</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">$50k+</div>
+                <div class="stat-label">Combined Flips/Month</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="pricing-section">
+        <h2 class="section-title">Choose Your Plan</h2>
+        <p class="section-subtitle">Start with a 3-day free trial. Cancel anytime. No credit card required.</p>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Essential</h3>
+                <div class="pricing-price">$3.90</div>
+                <div class="pricing-freq">per month</div>
+                <ul class="pricing-features">
+                    <li>🎁 3-day free trial</li>
+                    <li>Instant SMS, WhatsApp, or email</li>
+                    <li>Unlimited location tracking</li>
+                    <li>Custom price filters</li>
+                    <li>Priority support</li>
+                </ul>
+                <a href="/subscribe" class="pricing-cta">Start Free Trial</a>
+            </div>
+            
+            <div class="pricing-card popular">
+                <div class="pricing-badge">🔥 BEST VALUE</div>
+                <h3>Lifetime</h3>
+                <div class="pricing-price">$149</div>
+                <div class="pricing-freq">one-time payment</div>
+                <ul class="pricing-features">
+                    <li>✨ All Elite features forever</li>
+                    <li>SMS + WhatsApp + Email</li>
+                    <li>No recurring payments ever</li>
+                    <li>5-min check intervals</li>
+                    <li>Priority support for life</li>
+                    <li>Early access to features</li>
+                </ul>
+                <a href="/subscribe" class="pricing-cta">Claim Lifetime Access</a>
+            </div>
+            
+            <div class="pricing-card">
+                <h3>Elite</h3>
+                <div class="pricing-price">$6.90</div>
+                <div class="pricing-freq">per month</div>
+                <ul class="pricing-features">
+                    <li>All channels unlocked</li>
+                    <li>SMS + WhatsApp + Email</li>
+                    <li>5-minute check intervals</li>
+                    <li>Location heatmaps</li>
+                    <li>Concierge support</li>
+                </ul>
+                <a href="/subscribe" class="pricing-cta">Unlock Elite</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="hero">
+        <div class="hero-content">
+            <h2 class="section-title" style="color: white;">Ready to 10x Your Flipping Business?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 40px;">Join successful resellers who are already using Marketseek to dominate their local markets.</p>
+            <a href="/subscribe" class="cta-primary">Start 3-Day Free Trial (No Credit Card)</a>
+            <p style="margin-top: 24px; font-size: 0.95rem; opacity: 0.8;">✓ Cancel anytime ✓ No contracts ✓ Money-back guarantee</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 Marketseek. Built for resellers, by resellers.</p>
+        <p style="margin-top: 16px;">
+            <a href="/terms">Terms</a> · 
+            <a href="/privacy">Privacy</a> · 
+            <a href="/faq">FAQ</a> · 
+            <a href="/referrals">Referral Program</a>
+        </p>
+    </div>
+</body>
+</html>

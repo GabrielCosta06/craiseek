@@ -40,6 +40,7 @@ from db import (
     update_digest_sent,
     get_listings_from_past_week,
     increment_successful_referrals,
+    mark_subscriber_as_lifetime,
 )
 
 logger = logging.getLogger(__name__)
@@ -85,6 +86,8 @@ PLAN_DETAILS = [
             "Priority support in under 6 hours",
         ],
         "action": "Start Free Trial",
+        "trial_days": 3,
+        "trial_info": "No credit card charge for 3 days. Cancel anytime during trial at no cost.",
     },
     {
         "id": "elite",
@@ -100,6 +103,25 @@ PLAN_DETAILS = [
             "Concierge support with human escalation",
         ],
         "action": "Unlock Elite",
+    },
+    {
+        "id": "lifetime",
+        "name": "Lifetime",
+        "price": "$149",
+        "badge": "🔥 Limited Offer",
+        "frequency": "one-time",
+        "tagline": "Pay once, use forever. Lock in Elite features for life.",
+        "features": [
+            "✨ All Elite features included forever",
+            "No recurring payments ever",
+            "Priority customer support for life",
+            "Early access to new features",
+            "Locked-in price (never increases)",
+            "🎁 Perfect for early adopters & power users",
+        ],
+        "action": "Claim Lifetime Access",
+        "limited": True,
+        "limited_spots": 50,
     },
 ]
 
@@ -236,10 +258,17 @@ async def create_checkout_session(request: Request) -> JSONResponse:
         "essential": {
             "price_id": settings.stripe_price_id_essential,
             "channels": [channel_choice if channel_choice in {"sms", "email", "whatsapp"} else "sms"],
+            "mode": "subscription",
         },
         "elite": {
             "price_id": settings.stripe_price_id_elite,
             "channels": ["sms", "email", "whatsapp"],
+            "mode": "subscription",
+        },
+        "lifetime": {
+            "price_id": settings.stripe_price_id_lifetime,
+            "channels": ["sms", "email", "whatsapp"],
+            "mode": "payment",
         },
     }
 
@@ -254,18 +283,19 @@ async def create_checkout_session(request: Request) -> JSONResponse:
 
     channels = config["channels"]  # type: ignore[assignment]
     channels_str = ",".join(channels)
+    mode = config["mode"]  # type: ignore[assignment]
 
     success_url = str(request.url_for("landing")) + "?success=true"
     cancel_url = str(request.url_for("landing")) + "?canceled=true"
 
-    # Add 3-day free trial for Essential plan
+    # Add 3-day free trial for Essential plan only (not for lifetime)
     trial_config = {}
     if plan == "essential":
         trial_config = {"subscription_data": {"trial_period_days": 3}}
     
     try:
         session = stripe.checkout.Session.create(
-            mode="subscription",
+            mode=mode,
             line_items=[{"price": price_id, "quantity": 1}],
             success_url=success_url,
             cancel_url=cancel_url,
@@ -276,6 +306,7 @@ async def create_checkout_session(request: Request) -> JSONResponse:
                 "channels": channels_str,
                 "requested_channel": channel_choice,
                 "referral_code": referral_code if referral_code else "",
+                "is_lifetime": "true" if plan == "lifetime" else "false",
             },
             **trial_config,
         )
@@ -316,6 +347,8 @@ async def stripe_webhook(request: Request) -> JSONResponse:
         channels_raw = metadata.get("channels") or "sms"
         channels = [c.strip() for c in channels_raw.split(",") if c.strip()]
         referral_code = metadata.get("referral_code", "").strip()
+        is_lifetime = metadata.get("is_lifetime", "false").lower() == "true"
+        
         whatsapp_contact = None
         if "whatsapp" in channels and phone:
             whatsapp_contact = phone if phone.startswith("whatsapp:") else f"whatsapp:{phone}"
@@ -330,6 +363,11 @@ async def stripe_webhook(request: Request) -> JSONResponse:
                 email=email if "email" in channels else None,
                 whatsapp=whatsapp_contact,
             )
+            
+            # Mark as lifetime if applicable
+            if is_lifetime and email:
+                mark_subscriber_as_lifetime(email)
+                logger.info("Marked subscriber as lifetime", extra={"email": email})
             
             # Generate referral code for new subscriber
             if email and inserted:
@@ -359,6 +397,7 @@ async def stripe_webhook(request: Request) -> JSONResponse:
                     "email": email,
                     "channels": channels,
                     "tier": tier,
+                    "is_lifetime": is_lifetime,
                     "inserted": inserted,
                     "session_id": session.get("id"),
                 },
@@ -638,6 +677,12 @@ async def referrals_page(request: Request) -> HTMLResponse:
 async def promo_page(request: Request) -> HTMLResponse:
     """Show promotional page for free trial and referral program."""
     return templates.TemplateResponse("promo.html", {"request": request, "user": _current_user(request)})
+
+
+@app.get("/for-resellers", response_class=HTMLResponse)
+async def resellers_promo_page(request: Request) -> HTMLResponse:
+    """Show promotional page specifically targeting resellers and flippers."""
+    return templates.TemplateResponse("promo_resellers.html", {"request": request, "user": _current_user(request)})
 
 
 @app.post("/admin/send-digests")

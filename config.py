@@ -27,6 +27,7 @@ class Settings:
     stripe_api_key: Optional[str]
     stripe_price_id_essential: Optional[str]
     stripe_price_id_elite: Optional[str]
+    stripe_price_id_lifetime: Optional[str]
     stripe_webhook_secret: Optional[str]
     user_agent: str
     email_smtp_host: Optional[str]
@@ -103,6 +104,7 @@ def get_settings() -> Settings:
         stripe_api_key=os.getenv("STRIPE_API_KEY"),
         stripe_price_id_essential=os.getenv("STRIPE_PRICE_ID_ESSENTIAL"),
         stripe_price_id_elite=os.getenv("STRIPE_PRICE_ID_ELITE"),
+        stripe_price_id_lifetime=os.getenv("STRIPE_PRICE_ID_LIFETIME"),
         stripe_webhook_secret=os.getenv("STRIPE_WEBHOOK_SECRET"),
         user_agent=user_agent,
         email_smtp_host=os.getenv("EMAIL_SMTP_HOST"),

@@ -47,6 +47,8 @@ class Subscriber:
     successful_referrals: int = 0
     whatsapp_unlocked: bool = False
     last_digest_sent: Optional[str] = None
+    is_lifetime: bool = False
+    lifetime_purchased_at: Optional[str] = None
 
 
 @dataclass
@@ -119,6 +121,8 @@ def init_db() -> None:
         successful_referrals INTEGER DEFAULT 0,
         whatsapp_unlocked INTEGER DEFAULT 0,
         last_digest_sent TIMESTAMP,
+        is_lifetime INTEGER DEFAULT 0,
+        lifetime_purchased_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -182,6 +186,10 @@ def _ensure_subscriber_schema(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE subscribers ADD COLUMN whatsapp_unlocked INTEGER DEFAULT 0;")
     if "last_digest_sent" not in columns:
         conn.execute("ALTER TABLE subscribers ADD COLUMN last_digest_sent TIMESTAMP;")
+    if "is_lifetime" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN is_lifetime INTEGER DEFAULT 0;")
+    if "lifetime_purchased_at" not in columns:
+        conn.execute("ALTER TABLE subscribers ADD COLUMN lifetime_purchased_at TIMESTAMP;")
 
     conn.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_subscribers_phone ON subscribers(phone) WHERE phone IS NOT NULL;"
@@ -643,6 +651,21 @@ def set_referral_code(email: str) -> Optional[str]:
                 logger.info("Referral code generated", extra={"email": email, "code": code})
                 return code
     return None
+
+
+def mark_subscriber_as_lifetime(email: str) -> bool:
+    """Mark a subscriber as having purchased lifetime access."""
+    query = """
+    UPDATE subscribers
+    SET is_lifetime = 1, lifetime_purchased_at = CURRENT_TIMESTAMP, tier = 'ELITE'
+    WHERE email = ?;
+    """
+    with get_connection() as conn:
+        cursor = conn.execute(query, (email,))
+        success = cursor.rowcount > 0
+    if success:
+        logger.info("Subscriber marked as lifetime", extra={"email": email})
+    return success
 
 
 def get_subscriber_by_referral_code(code: str) -> Optional[Subscriber]:
